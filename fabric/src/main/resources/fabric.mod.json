@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "foundation",
+  "version": "${version}",
+  "name": "[Let's Do] Foundation",
+  "description": "Shared library for the Let's Do mods.",
+  "authors": [
+    "satisfy"
+  ],
+  "contact": {
+    "issues": "https://github.com/satisfyu/Let-s-Do-Hub",
+    "sources": "https://github.com/Let-s-Do-Collection/Foundation"
+  },
+  "license": "custom",
+  "icon": "pack.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.satisfy.foundation.fabric.FoundationFabric"
+    ],
+    "client": [
+      "net.satisfy.foundation.fabric.client.FoundationClientFabric"
+    ]
+  },
+  "mixins": [
+    "foundation-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabric-api": "*",
+    "minecraft": ">=1.21",
+    "architectury": ">=13.0.0"
+  }
+}

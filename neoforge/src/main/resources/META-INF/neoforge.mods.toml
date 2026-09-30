@@ -1,0 +1,38 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "Custom"
+issueTrackerURL = "https://github.com/satisfyu/Let-s-Do-Hub"
+
+[[mixins]]
+config = "foundation-neoforge.mixins.json"
+
+[[mods]]
+modId = "foundation"
+version = "${version}"
+displayName = "[Let's Do] Foundation"
+authors = "satisfy"
+description = '''
+Shared library for the Let's Do mods.
+'''
+logoFile = "pack.png"
+
+[[dependencies.foundation]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.foundation]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.foundation]]
+modId = "architectury"
+type = "required"
+versionRange = "[13.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
