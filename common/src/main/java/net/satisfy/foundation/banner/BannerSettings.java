@@ -1,0 +1,22 @@
+package net.satisfy.foundation.banner;
+
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import java.util.function.Supplier;
+
+/**
+ * Everything that makes a mod's banner its own.
+ *
+ * @param effect effect given to every player within {@code radius} blocks while the banner stands
+ */
+public record BannerSettings(Supplier<BlockEntityType<CompletionistBannerEntity>> type, Supplier<Block> wallBanner, ResourceLocation texture, String tooltipPrefix, Holder<MobEffect> effect, int radius) {
+    public static final int DEFAULT_RADIUS = 8;
+
+    public BannerSettings(Supplier<BlockEntityType<CompletionistBannerEntity>> type, Supplier<Block> wallBanner, ResourceLocation texture, String tooltipPrefix, Holder<MobEffect> effect) {
+        this(type, wallBanner, texture, tooltipPrefix, effect, DEFAULT_RADIUS);
+    }
+}

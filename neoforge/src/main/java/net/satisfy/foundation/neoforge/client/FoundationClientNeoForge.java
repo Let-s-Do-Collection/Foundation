@@ -4,13 +4,46 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.foundation.Foundation;
 import net.satisfy.foundation.client.FoundationClient;
+import net.satisfy.foundation.particle.DyeSplashParticle;
+import net.satisfy.foundation.particle.FeatherParticle;
+import net.satisfy.foundation.particle.FireflyParticle;
+import net.satisfy.foundation.particle.SoupBubbleParticle;
+import net.satisfy.foundation.particle.SoupCookingBubbleParticle;
+import net.satisfy.foundation.particle.SoupSteamParticle;
+import net.satisfy.foundation.particle.WaterDripParticle;
+import net.satisfy.foundation.particle.WaterSplashParticle;
+import net.satisfy.foundation.registry.FoundationParticles;
 
-@EventBusSubscriber(modid = Foundation.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Foundation.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class FoundationClientNeoForge {
+    private static boolean preInitialized;
+
+    @SubscribeEvent
+    public static void beforeClientSetup(RegisterEvent event) {
+        if (!preInitialized) {
+            preInitialized = true;
+            FoundationClient.preInitClient();
+        }
+    }
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(FoundationClient::onInitializeClient);
+    }
+
+    @SubscribeEvent
+    public static void registerParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(FoundationParticles.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.FEATHER.get(), FeatherParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.WATER_DRIP.get(), WaterDripParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.WATER_SPLASH.get(), WaterSplashParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.FIREFLY.get(), FireflyParticle.Provider::new);
     }
 }

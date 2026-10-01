@@ -6,6 +6,9 @@ issueTrackerURL = "https://github.com/satisfyu/Let-s-Do-Hub"
 [[mixins]]
 config = "foundation-neoforge.mixins.json"
 
+[[mixins]]
+config = "foundation-common.mixins.json"
+
 [[mods]]
 modId = "foundation"
 version = "${version}"

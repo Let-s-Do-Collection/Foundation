@@ -23,7 +23,8 @@
     ]
   },
   "mixins": [
-    "foundation-fabric.mixins.json"
+    "foundation-fabric.mixins.json",
+    "foundation-common.mixins.json"
   ],
   "depends": {
     "fabric-api": "*",

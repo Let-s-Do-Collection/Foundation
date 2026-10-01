@@ -1,0 +1,8 @@
+{
+  "tooltip.foundation.canbeplaced": "Kann platziert werden",
+  "tooltip.foundation.hold_shift": "Halte %s für mehr Informationen",
+  "tooltip.foundation.recipe_unlocker.already_unlocked": "Du hast dieses Rezept bereits erlernt!",
+  "tooltip.foundation.recipe_unlocker.recipe_suffix": " Rezept",
+  "tooltip.foundation.recipe_unlocker.unlocked.prefix": "Rezept freigeschaltet:",
+  "tooltip.foundation.recipe_unlocker.unlocks": "Schaltet frei: %s"
+}
