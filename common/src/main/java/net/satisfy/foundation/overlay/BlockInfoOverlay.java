@@ -104,6 +104,10 @@ public final class BlockInfoOverlay {
             return;
         }
         Level level = minecraft.level;
+        graphics.flush();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         BlockPos notice = drawNotice(graphics, minecraft);
         BlockPos targeted = null;
         if (minecraft.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK) {
@@ -223,12 +227,14 @@ public final class BlockInfoOverlay {
         if (provider != null) {
             provider.beforeBackground(minecraft.level, pos, state);
         }
+        RenderSystem.disableDepthTest();
         if (notice) {
             drawNoticeBackground(graphics, width, height);
         } else {
             TooltipRenderUtil.renderTooltipBackground(graphics, 0, 0, width, height, 0);
         }
         graphics.flush();
+        RenderSystem.enableDepthTest();
         int cursor = 0;
         for (int i = 0; i < sections.size(); i++) {
             if (i > 0) {
