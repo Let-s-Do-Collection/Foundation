@@ -9,7 +9,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -48,6 +47,9 @@ public final class BlockInfoOverlay {
     private static final int NOTICE_BACKGROUND = 0xF02A1C0C;
     private static final int NOTICE_BORDER_TOP = 0xF0F2C94C;
     private static final int NOTICE_BORDER_BOTTOM = 0xF0A0641E;
+    private static final int TOOLTIP_BACKGROUND = 0xF0100010;
+    private static final int TOOLTIP_BORDER_TOP = 0x505000FF;
+    private static final int TOOLTIP_BORDER_BOTTOM = 0x5028007F;
 
     private static final List<BlockInfoProvider> PROVIDERS = new ArrayList<>();
     private static final Map<BlockPos, PanelState> PANEL_STATES = new HashMap<>();
@@ -222,16 +224,16 @@ public final class BlockInfoOverlay {
         RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
         graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0.0F);
+        graphics.pose().translate(x, y, 400.0F);
         graphics.pose().scale(scale, scale, 1.0F);
         if (provider != null) {
             provider.beforeBackground(minecraft.level, pos, state);
         }
         RenderSystem.disableDepthTest();
         if (notice) {
-            drawNoticeBackground(graphics, width, height);
+            drawBackground(graphics, width, height, NOTICE_BACKGROUND, NOTICE_BORDER_TOP, NOTICE_BORDER_BOTTOM);
         } else {
-            TooltipRenderUtil.renderTooltipBackground(graphics, 0, 0, width, height, 0);
+            drawBackground(graphics, width, height, TOOLTIP_BACKGROUND, TOOLTIP_BORDER_TOP, TOOLTIP_BORDER_BOTTOM);
         }
         graphics.flush();
         RenderSystem.enableDepthTest();
@@ -248,16 +250,16 @@ public final class BlockInfoOverlay {
         graphics.flush();
     }
 
-    private static void drawNoticeBackground(GuiGraphics graphics, int width, int height) {
-        graphics.fill(-3, -4, width + 3, -3, NOTICE_BACKGROUND);
-        graphics.fill(-3, height + 3, width + 3, height + 4, NOTICE_BACKGROUND);
-        graphics.fill(-3, -3, width + 3, height + 3, NOTICE_BACKGROUND);
-        graphics.fill(-4, -3, -3, height + 3, NOTICE_BACKGROUND);
-        graphics.fill(width + 3, -3, width + 4, height + 3, NOTICE_BACKGROUND);
-        graphics.fillGradient(-3, -2, -2, height + 2, NOTICE_BORDER_TOP, NOTICE_BORDER_BOTTOM);
-        graphics.fillGradient(width + 2, -2, width + 3, height + 2, NOTICE_BORDER_TOP, NOTICE_BORDER_BOTTOM);
-        graphics.fill(-3, -3, width + 3, -2, NOTICE_BORDER_TOP);
-        graphics.fill(-3, height + 2, width + 3, height + 3, NOTICE_BORDER_BOTTOM);
+    private static void drawBackground(GuiGraphics graphics, int width, int height, int background, int borderTop, int borderBottom) {
+        graphics.fill(-3, -4, width + 3, -3, background);
+        graphics.fill(-3, height + 3, width + 3, height + 4, background);
+        graphics.fill(-3, -3, width + 3, height + 3, background);
+        graphics.fill(-4, -3, -3, height + 3, background);
+        graphics.fill(width + 3, -3, width + 4, height + 3, background);
+        graphics.fillGradient(-3, -2, -2, height + 2, borderTop, borderBottom);
+        graphics.fillGradient(width + 2, -2, width + 3, height + 2, borderTop, borderBottom);
+        graphics.fill(-3, -3, width + 3, -2, borderTop);
+        graphics.fill(-3, height + 2, width + 3, height + 3, borderBottom);
     }
 
     private static Optional<float[]> project(Minecraft minecraft, GuiGraphics graphics, Vec3 point) {
