@@ -1,5 +1,6 @@
 package net.satisfy.foundation.particle;
 
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -66,6 +67,21 @@ public class SoupSteamParticle extends TextureSheetParticle {
         @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
             return new SoupSteamParticle(level, x, y + 0.25, z, velocityX, velocityY, velocityZ, this.sprites);
+        }
+    }
+
+    public static class ColoredProvider implements ParticleProvider<ColorParticleOption> {
+        private final SpriteSet sprites;
+
+        public ColoredProvider(SpriteSet sprites) {
+            this.sprites = sprites;
+        }
+
+        @Override
+        public Particle createParticle(ColorParticleOption color, ClientLevel level, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+            SoupSteamParticle particle = new SoupSteamParticle(level, x, y, z, velocityX, velocityY, velocityZ, this.sprites);
+            particle.setColor(color.getRed(), color.getGreen(), color.getBlue());
+            return particle;
         }
     }
 }

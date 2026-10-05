@@ -4,6 +4,7 @@ import net.satisfy.foundation.client.armor.ArmorSetTooltips;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import net.satisfy.foundation.client.render.SinkRenderer;
+import net.satisfy.foundation.client.render.StackRenderer;
 import net.satisfy.foundation.registry.FoundationBlockEntities;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
@@ -30,9 +31,13 @@ public class FoundationClient {
         EntityRendererRegistry.register(FoundationEntities.CHAIR, ChairRenderer::new);
     }
 
+    public static void registerBlockEntityRenderers() {
+        BlockEntityRendererRegistry.register(FoundationBlockEntities.SINK.get(), SinkRenderer::new);
+        BlockEntityRendererRegistry.register(FoundationBlockEntities.STACK.get(), StackRenderer::new);
+    }
+
     /** Overlay + tooltip hooks. */
     public static void onInitializeClient() {
-        BlockEntityRendererRegistry.register(FoundationBlockEntities.SINK.get(), SinkRenderer::new);
         BlockInfoOverlay.init();
         ArmorSetTooltips.init();
         FurnitureColors.init();
@@ -43,6 +48,7 @@ public class FoundationClient {
     public static void registerParticles() {
         ParticleProviderRegistry.register(FoundationParticles.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
         ParticleProviderRegistry.register(FoundationParticles.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
+        ParticleProviderRegistry.register(FoundationParticles.COLORED_STEAM.get(), SoupSteamParticle.ColoredProvider::new);
         ParticleProviderRegistry.register(FoundationParticles.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
         ParticleProviderRegistry.register(FoundationParticles.COLORED_SOUP_BUBBLE.get(), SoupBubbleParticle.ColoredProvider::new);
         ParticleProviderRegistry.register(FoundationParticles.COLORED_SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.ColoredProvider::new);

@@ -1,6 +1,13 @@
 package net.satisfy.foundation.food;
 
 import net.satisfy.foundation.block.FacingBlock;
+import net.satisfy.foundation.block.StackBlockEntity;
+import net.satisfy.foundation.block.StackableBlock;
+import net.satisfy.foundation.util.ShapeUtil;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,18 +51,34 @@ import java.util.Objects;
  * Placeable food (only when sneaking). Each click eats one bite until
  * {@code maxBites} is reached, then it is gone.
  */
-public class FoodBlock extends FacingBlock {
+public class FoodBlock extends FacingBlock implements EntityBlock {
     public static final DirectionProperty FACING;
     public static final IntegerProperty BITES;
+    public static final BooleanProperty ANIMATED = StackableBlock.ANIMATED;
     private final int maxBites;
     private final FoodProperties foodComponent;
     private final VoxelShape SHAPE = Shapes.box(0.1875, 0, 0.1875, 0.8125, 0.875, 0.8125);
+    private final VoxelShape[][] shapes;
 
     public FoodBlock(Properties settings, int maxBites, FoodProperties foodComponent) {
         super(settings);
         this.maxBites = maxBites;
         this.foodComponent = foodComponent;
-        registerDefaultState(this.defaultBlockState().setValue(BITES, 0).setValue(FACING, Direction.NORTH));
+        this.shapes = null;
+        registerDefaultState(this.defaultBlockState().setValue(BITES, 0).setValue(FACING, Direction.NORTH).setValue(ANIMATED, false));
+    }
+
+    public FoodBlock(Properties settings, int maxBites, FoodProperties foodComponent, VoxelShape... shapesNorthByBites) {
+        super(settings);
+        this.maxBites = maxBites;
+        this.foodComponent = foodComponent;
+        this.shapes = new VoxelShape[shapesNorthByBites.length][4];
+        for (int bites = 0; bites < shapesNorthByBites.length; bites++) {
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                this.shapes[bites][direction.get2DDataValue()] = ShapeUtil.rotateShape(Direction.NORTH, direction, shapesNorthByBites[bites]);
+            }
+        }
+        registerDefaultState(this.defaultBlockState().setValue(BITES, 0).setValue(FACING, Direction.NORTH).setValue(ANIMATED, false));
     }
 
     @Nullable
@@ -64,7 +87,7 @@ public class FoodBlock extends FacingBlock {
         if (!Objects.requireNonNull(ctx.getPlayer()).isShiftKeyDown()) {
             return null;
         }
-        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite()).setValue(ANIMATED, true);
     }
 
     @Override
@@ -104,7 +127,7 @@ public class FoodBlock extends FacingBlock {
 
         int bites = state.getValue(BITES);
         if (bites < maxBites - 1) {
-            world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
+            world.setBlock(pos, state.setValue(BITES, bites + 1).setValue(ANIMATED, true), 3);
         } else {
             world.destroyBlock(pos, false);
             world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
@@ -123,7 +146,7 @@ public class FoodBlock extends FacingBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, BITES);
+        builder.add(FACING, BITES, ANIMATED);
     }
 
     static {
@@ -133,7 +156,20 @@ public class FoodBlock extends FacingBlock {
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        if (shapes == null || shapes.length == 0) {
+            return SHAPE;
+        }
+        return shapes[Math.min(state.getValue(BITES), shapes.length - 1)][state.getValue(FACING).get2DDataValue()];
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return state.getValue(ANIMATED) ? RenderShape.ENTITYBLOCK_ANIMATED : RenderShape.MODEL;
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(ANIMATED) ? new StackBlockEntity(pos, state) : null;
     }
 
     @Override

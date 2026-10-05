@@ -18,6 +18,7 @@ description = '''
 Shared library for the Let's Do mods.
 '''
 logoFile = "pack.png"
+displayURL = "https://www.lets-do.ch"
 
 [[dependencies.foundation]]
 modId = "neoforge"

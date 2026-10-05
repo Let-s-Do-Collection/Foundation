@@ -32,6 +32,11 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,8 +46,9 @@ import java.util.List;
  * Empty hand takes one back.
  */
 @SuppressWarnings("all")
-public class StackableBlock extends Block {
-    private static final IntegerProperty STACK_PROPERTY = IntegerProperty.create("stack", 1, 8);
+public class StackableBlock extends Block implements EntityBlock {
+    public static final IntegerProperty STACK_PROPERTY = IntegerProperty.create("stack", 1, 8);
+    public static final BooleanProperty ANIMATED = BooleanProperty.create("animated");
     private static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private final int maxStack;
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 10, 14);
@@ -50,7 +56,7 @@ public class StackableBlock extends Block {
     public StackableBlock(Properties settings, int maxStack) {
         super(settings);
         this.maxStack = maxStack;
-        this.registerDefaultState(this.stateDefinition.any().setValue(STACK_PROPERTY, 1).setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(STACK_PROPERTY, 1).setValue(FACING, Direction.NORTH).setValue(ANIMATED, false));
     }
 
     @Override
@@ -60,7 +66,7 @@ public class StackableBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(STACK_PROPERTY, FACING);
+        builder.add(STACK_PROPERTY, FACING, ANIMATED);
     }
 
     @Override
@@ -70,7 +76,7 @@ public class StackableBlock extends Block {
 
     @Override
     public @NotNull BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(ANIMATED, true);
     }
 
     @Override
@@ -78,7 +84,7 @@ public class StackableBlock extends Block {
         if (player.isShiftKeyDown() && stack.isEmpty()) {
             if (!world.isClientSide) {
                 if (state.getValue(STACK_PROPERTY) > 1) {
-                    world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1), 3);
+                    world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1).setValue(ANIMATED, true), 3);
                 } else {
                     world.removeBlock(pos, false);
                 }
@@ -100,7 +106,7 @@ public class StackableBlock extends Block {
             }
         } else if (stack.getItem() == this.asItem()) {
             if (state.getValue(STACK_PROPERTY) < this.maxStack) {
-                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) + 1), 3);
+                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) + 1).setValue(ANIMATED, true), 3);
                 if (!player.isCreative()) {
                     stack.shrink(1);
                 }
@@ -117,7 +123,7 @@ public class StackableBlock extends Block {
                 world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.3F, 1.0F + world.random.nextFloat() * 0.2F);
             }
             if (state.getValue(STACK_PROPERTY) > 1) {
-                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1), 3);
+                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1).setValue(ANIMATED, true), 3);
             } else if (state.getValue(STACK_PROPERTY) == 1) {
                 world.destroyBlock(pos, false);
             }
@@ -153,5 +159,15 @@ public class StackableBlock extends Block {
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
         list.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.GRAY));
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return state.getValue(ANIMATED) ? RenderShape.ENTITYBLOCK_ANIMATED : RenderShape.MODEL;
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(ANIMATED) ? new StackBlockEntity(pos, state) : null;
     }
 }

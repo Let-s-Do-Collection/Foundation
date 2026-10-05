@@ -9,7 +9,8 @@
   ],
   "contact": {
     "issues": "https://github.com/satisfyu/Let-s-Do-Hub",
-    "sources": "https://github.com/Let-s-Do-Collection/Foundation"
+    "sources": "https://github.com/Let-s-Do-Collection/Foundation",
+    "homepage": "https://www.lets-do.ch"
   },
   "license": "custom",
   "icon": "pack.png",

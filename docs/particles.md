@@ -11,6 +11,7 @@ Registered and rendered by Foundation – just spawn them.
 | `WATER_SPLASH` | `foundation:water_splash` | simple | small splash |
 | `DYE_SPLASH` | `foundation:dye_splash` | colour | coloured splash (dyeing, oil …) |
 | `FEATHER` | `foundation:feather` | colour | feather drifting down |
+| `COLORED_STEAM` | `foundation:colored_steam` | colour | steam in any colour (black smoke from a dying fire …) |
 | `FIREFLY` | `foundation:firefly` | simple | glowing, pulsing firefly |
 
 ```java

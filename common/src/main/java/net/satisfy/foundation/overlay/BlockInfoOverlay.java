@@ -212,6 +212,11 @@ public final class BlockInfoOverlay {
             x = Math.clamp(x, SCREEN_MARGIN, graphics.guiWidth() - width * scale - SCREEN_MARGIN);
             y = Math.clamp(y, SCREEN_MARGIN, graphics.guiHeight() - height * scale - SCREEN_MARGIN);
         }
+        graphics.flush();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
         graphics.pose().pushPose();
         graphics.pose().translate(x, y, 0.0F);
         graphics.pose().scale(scale, scale, 1.0F);
@@ -223,6 +228,7 @@ public final class BlockInfoOverlay {
         } else {
             TooltipRenderUtil.renderTooltipBackground(graphics, 0, 0, width, height, 0);
         }
+        graphics.flush();
         int cursor = 0;
         for (int i = 0; i < sections.size(); i++) {
             if (i > 0) {
@@ -233,6 +239,7 @@ public final class BlockInfoOverlay {
             cursor += sections.get(i).height();
         }
         graphics.pose().popPose();
+        graphics.flush();
     }
 
     private static void drawNoticeBackground(GuiGraphics graphics, int width, int height) {

@@ -8,6 +8,7 @@ public class FoundationClientFabric implements ClientModInitializer {
     public void onInitializeClient() {
         FoundationClient.preInitClient();
         FoundationClient.registerParticles();
+        FoundationClient.registerBlockEntityRenderers();
         FoundationClient.onInitializeClient();
     }
 }

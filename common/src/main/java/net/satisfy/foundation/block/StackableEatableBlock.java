@@ -24,31 +24,56 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.Mth;
+import net.satisfy.foundation.util.ShapeUtil;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 /** Like {@link StackableBlock}, but sneak + empty hand eats one layer instead. */
 @SuppressWarnings("all")
-public class StackableEatableBlock extends Block {
-    private static final IntegerProperty STACK_PROPERTY = IntegerProperty.create("stack", 1, 8);
+public class StackableEatableBlock extends Block implements EntityBlock {
+    private static final IntegerProperty STACK_PROPERTY = StackableBlock.STACK_PROPERTY;
+    private static final BooleanProperty ANIMATED = StackableBlock.ANIMATED;
     private static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private final int maxStack;
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 10, 14);
+    private final VoxelShape[][] shapes;
 
     public StackableEatableBlock(Properties settings, int maxStack) {
         super(settings);
         this.maxStack = maxStack;
-        this.registerDefaultState(this.stateDefinition.any().setValue(STACK_PROPERTY, 1).setValue(FACING, Direction.NORTH));
+        this.shapes = null;
+        this.registerDefaultState(this.stateDefinition.any().setValue(STACK_PROPERTY, 1).setValue(FACING, Direction.NORTH).setValue(ANIMATED, false));
+    }
+
+    public StackableEatableBlock(Properties settings, int maxStack, VoxelShape... shapesNorthByStack) {
+        super(settings);
+        this.maxStack = maxStack;
+        this.shapes = new VoxelShape[shapesNorthByStack.length][4];
+        for (int stack = 0; stack < shapesNorthByStack.length; stack++) {
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                this.shapes[stack][direction.get2DDataValue()] = ShapeUtil.rotateShape(Direction.NORTH, direction, shapesNorthByStack[stack]);
+            }
+        }
+        this.registerDefaultState(this.stateDefinition.any().setValue(STACK_PROPERTY, 1).setValue(FACING, Direction.NORTH).setValue(ANIMATED, false));
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        if (shapes == null || shapes.length == 0) {
+            return SHAPE;
+        }
+        return shapes[Mth.clamp(state.getValue(STACK_PROPERTY) - 1, 0, shapes.length - 1)][state.getValue(FACING).get2DDataValue()];
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(STACK_PROPERTY, FACING);
+        builder.add(STACK_PROPERTY, FACING, ANIMATED);
     }
 
     @Override
@@ -58,7 +83,7 @@ public class StackableEatableBlock extends Block {
 
     @Override
     public @NotNull BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(ANIMATED, true);
     }
 
     @Override
@@ -66,7 +91,7 @@ public class StackableEatableBlock extends Block {
         if (player.isShiftKeyDown() && stack.isEmpty()) {
             if (!world.isClientSide) {
                 if (state.getValue(STACK_PROPERTY) > 1) {
-                    world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1), Block.UPDATE_ALL);
+                    world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1).setValue(ANIMATED, true), Block.UPDATE_ALL);
                 } else {
                     world.removeBlock(pos, false);
                 }
@@ -86,7 +111,7 @@ public class StackableEatableBlock extends Block {
             return ItemInteractionResult.sidedSuccess(world.isClientSide);
         } else if (stack.getItem() == this.asItem()) {
             if (state.getValue(STACK_PROPERTY) < this.maxStack) {
-                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) + 1), Block.UPDATE_ALL);
+                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) + 1).setValue(ANIMATED, true), Block.UPDATE_ALL);
                 if (!player.isCreative()) {
                     stack.shrink(1);
                 }
@@ -103,7 +128,7 @@ public class StackableEatableBlock extends Block {
             }
         } else if (stack.isEmpty()) {
             if (state.getValue(STACK_PROPERTY) > 1) {
-                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1), Block.UPDATE_ALL);
+                world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1).setValue(ANIMATED, true), Block.UPDATE_ALL);
             } else if (state.getValue(STACK_PROPERTY) == 1) {
                 world.destroyBlock(pos, false);
             }
@@ -112,5 +137,15 @@ public class StackableEatableBlock extends Block {
             return ItemInteractionResult.SUCCESS;
         }
         return super.useItemOn(stack, state, world, pos, player, interactionHand, blockHitResult);
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return state.getValue(ANIMATED) ? RenderShape.ENTITYBLOCK_ANIMATED : RenderShape.MODEL;
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(ANIMATED) ? new StackBlockEntity(pos, state) : null;
     }
 }

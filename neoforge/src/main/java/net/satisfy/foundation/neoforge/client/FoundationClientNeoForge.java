@@ -4,10 +4,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.foundation.Foundation;
 import net.satisfy.foundation.client.FoundationClient;
+import net.satisfy.foundation.client.render.SinkRenderer;
+import net.satisfy.foundation.client.render.StackRenderer;
+import net.satisfy.foundation.registry.FoundationBlockEntities;
 import net.satisfy.foundation.particle.DyeSplashParticle;
 import net.satisfy.foundation.particle.FeatherParticle;
 import net.satisfy.foundation.particle.FireflyParticle;
@@ -36,9 +40,16 @@ public class FoundationClientNeoForge {
     }
 
     @SubscribeEvent
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(FoundationBlockEntities.SINK.get(), SinkRenderer::new);
+        event.registerBlockEntityRenderer(FoundationBlockEntities.STACK.get(), StackRenderer::new);
+    }
+
+    @SubscribeEvent
     public static void registerParticles(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(FoundationParticles.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.COLORED_STEAM.get(), SoupSteamParticle.ColoredProvider::new);
         event.registerSpriteSet(FoundationParticles.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.COLORED_SOUP_BUBBLE.get(), SoupBubbleParticle.ColoredProvider::new);
         event.registerSpriteSet(FoundationParticles.COLORED_SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.ColoredProvider::new);

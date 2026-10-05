@@ -19,10 +19,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 /** Inventory holder for {@link StorageBlock}. Syncs to tracking players on every change. */
 public class StorageBlockEntity extends BlockEntity implements Clearable {
     private int size;
     private NonNullList<ItemStack> inventory;
+    private long wobbleStart = Long.MIN_VALUE / 2;
+    private long[] slotWobbleStart = new long[0];
 
     public StorageBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -63,9 +67,26 @@ public class StorageBlockEntity extends BlockEntity implements Clearable {
     @Override
     protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         super.loadAdditional(compoundTag, provider);
+        NonNullList<ItemStack> previous = this.inventory;
+        int previousCount = previous == null ? -1 : countItems();
         this.size = compoundTag.getInt("size");
         this.inventory = NonNullList.withSize(this.size, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(compoundTag, this.inventory, provider);
+        if (this.slotWobbleStart.length != this.size) {
+            this.slotWobbleStart = new long[this.size];
+            Arrays.fill(this.slotWobbleStart, Long.MIN_VALUE / 2);
+        }
+        if (previous != null && this.level != null && this.level.isClientSide()) {
+            long time = this.level.getGameTime();
+            if (previousCount != countItems()) {
+                this.wobbleStart = time;
+            }
+            for (int slot = 0; slot < this.size && slot < previous.size(); slot++) {
+                if (previous.get(slot).isEmpty() && !this.inventory.get(slot).isEmpty()) {
+                    this.slotWobbleStart[slot] = time;
+                }
+            }
+        }
     }
 
     @Override
@@ -89,6 +110,24 @@ public class StorageBlockEntity extends BlockEntity implements Clearable {
             this.inventory.set(i, inventory.get(i));
         }
 
+    }
+
+    private int countItems() {
+        int count = 0;
+        for (ItemStack stack : this.inventory) {
+            if (!stack.isEmpty()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public long getWobbleStart() {
+        return this.wobbleStart;
+    }
+
+    public long getWobbleStart(int slot) {
+        return slot >= 0 && slot < this.slotWobbleStart.length ? this.slotWobbleStart[slot] : Long.MIN_VALUE / 2;
     }
 
     public NonNullList<ItemStack> getInventory() {
