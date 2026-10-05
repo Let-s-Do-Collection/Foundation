@@ -26,10 +26,14 @@ public class CompletionistBannerEntity extends BlockEntity {
         }
         BannerSettings settings = banner.getSettings();
         if (!level.isClientSide && level.getGameTime() % EFFECT_INTERVAL == 0) {
-            AABB effectRadius = new AABB(pos).inflate(settings.radius());
+            int radius = settings.radius().getAsInt();
+            if (radius <= 0) {
+                return;
+            }
+            AABB effectRadius = new AABB(pos).inflate(radius);
             List<Player> players = level.getEntitiesOfClass(Player.class, effectRadius);
             for (Player player : players) {
-                player.addEffect(new MobEffectInstance(settings.effect(), EFFECT_DURATION, 0, true, false));
+                player.addEffect(new MobEffectInstance(settings.effect(), EFFECT_DURATION, settings.amplifier().getAsInt(), true, false));
             }
         }
     }

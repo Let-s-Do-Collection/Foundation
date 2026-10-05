@@ -24,3 +24,22 @@ serverLevel.sendParticles(red, x, y, z, 12, 0.2, 0.1, 0.2, 0.05);
 
 Want a new generic particle? Add it to `FoundationParticles`, register its provider in `FoundationClient`
 **and** in `FoundationClientNeoForge`, and put the JSON + textures under `assets/foundation/`.
+
+## Drifting leaves and fluff
+
+`DriftingParticle` is for particles you bring yourself (own type + textures) that should float out of a block: leaves from hedges or baskets, wool fluff from sheep.
+
+```java
+// Architectury
+ParticleProviderRegistry.register(MyParticles.HEDGE_LEAF, sprites -> new DriftingParticle.Provider(sprites, DriftingParticle.Style.LEAF, DriftingParticle.MotionProfile.LEAF, MyConfig::leafParticles));
+// NeoForge
+event.registerSpriteSet(MyParticles.HEDGE_LEAF.get(), sprites -> new DriftingParticle.Provider(sprites, DriftingParticle.Style.LEAF, DriftingParticle.MotionProfile.LEAF));
+```
+
+| Style | Looks like |
+|---|---|
+| `LEAF` | tinted with the biome foliage color, spins, stops on the ground |
+| `FLUFF` | whitish, rocks gently, slides a bit on the ground, translucent |
+
+Profiles: `MotionProfile.LEAF`, `LEAF_RISING` (tossed higher), `FLUFF` – or build your own.
+The optional `BooleanSupplier` is checked per spawn, handy for a config toggle.

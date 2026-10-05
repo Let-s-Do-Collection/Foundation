@@ -6,6 +6,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -13,10 +14,14 @@ import java.util.function.Supplier;
  *
  * @param effect effect given to every player within {@code radius} blocks while the banner stands
  */
-public record BannerSettings(Supplier<BlockEntityType<CompletionistBannerEntity>> type, Supplier<Block> wallBanner, ResourceLocation texture, String tooltipPrefix, Holder<MobEffect> effect, int radius) {
+public record BannerSettings(Supplier<BlockEntityType<CompletionistBannerEntity>> type, Supplier<Block> wallBanner, ResourceLocation texture, String tooltipPrefix, Holder<MobEffect> effect, IntSupplier radius, IntSupplier amplifier) {
     public static final int DEFAULT_RADIUS = 8;
 
     public BannerSettings(Supplier<BlockEntityType<CompletionistBannerEntity>> type, Supplier<Block> wallBanner, ResourceLocation texture, String tooltipPrefix, Holder<MobEffect> effect) {
         this(type, wallBanner, texture, tooltipPrefix, effect, DEFAULT_RADIUS);
+    }
+
+    public BannerSettings(Supplier<BlockEntityType<CompletionistBannerEntity>> type, Supplier<Block> wallBanner, ResourceLocation texture, String tooltipPrefix, Holder<MobEffect> effect, int radius) {
+        this(type, wallBanner, texture, tooltipPrefix, effect, () -> radius, () -> 0);
     }
 }

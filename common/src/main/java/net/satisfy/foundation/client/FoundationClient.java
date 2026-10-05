@@ -1,6 +1,10 @@
 package net.satisfy.foundation.client;
 
+import net.satisfy.foundation.client.armor.ArmorSetTooltips;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
+import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import net.satisfy.foundation.client.render.SinkRenderer;
+import net.satisfy.foundation.registry.FoundationBlockEntities;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import net.satisfy.foundation.banner.CompletionistBannerRenderer;
@@ -28,7 +32,10 @@ public class FoundationClient {
 
     /** Overlay + tooltip hooks. */
     public static void onInitializeClient() {
+        BlockEntityRendererRegistry.register(FoundationBlockEntities.SINK.get(), SinkRenderer::new);
         BlockInfoOverlay.init();
+        ArmorSetTooltips.init();
+        FurnitureColors.init();
         InfoTooltip.init();
     }
 
@@ -37,6 +44,8 @@ public class FoundationClient {
         ParticleProviderRegistry.register(FoundationParticles.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
         ParticleProviderRegistry.register(FoundationParticles.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
         ParticleProviderRegistry.register(FoundationParticles.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
+        ParticleProviderRegistry.register(FoundationParticles.COLORED_SOUP_BUBBLE.get(), SoupBubbleParticle.ColoredProvider::new);
+        ParticleProviderRegistry.register(FoundationParticles.COLORED_SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.ColoredProvider::new);
         ParticleProviderRegistry.register(FoundationParticles.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
         ParticleProviderRegistry.register(FoundationParticles.FEATHER.get(), FeatherParticle.Provider::new);
         ParticleProviderRegistry.register(FoundationParticles.WATER_DRIP.get(), WaterDripParticle.Provider::new);

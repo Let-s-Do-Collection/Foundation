@@ -24,6 +24,8 @@ public record SetTextPacket(BlockPos pos, List<String> texts) implements CustomP
     public static final CustomPacketPayload.Type<SetTextPacket> TYPE =
             new Type<>(Foundation.identifier("set_text"));
 
+    private static final double MAX_EDIT_DISTANCE_SQR = 64.0;
+
     public static final StreamCodec<RegistryFriendlyByteBuf, SetTextPacket> STREAM_CODEC =
             StreamCodec.of(SetTextPacket::toNetwork, SetTextPacket::fromNetwork);
 
@@ -56,7 +58,7 @@ public record SetTextPacket(BlockPos pos, List<String> texts) implements CustomP
     /** Writes the lines, extra lines above {@link TextEditableBlockEntity#getTextLineCount()} get ignored. */
     public static void handle(SetTextPacket msg, ServerPlayer player) {
         Level level = player.level();
-        if (level.isLoaded(msg.pos)) {
+        if (level.isLoaded(msg.pos) && player.distanceToSqr(msg.pos.getCenter()) <= MAX_EDIT_DISTANCE_SQR) {
             BlockEntity entity = level.getBlockEntity(msg.pos);
             if (entity instanceof TextEditableBlockEntity editable) {
                 int maxLines = editable.getTextLineCount();

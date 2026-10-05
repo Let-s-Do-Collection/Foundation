@@ -3,7 +3,7 @@
 ## Fireflies around lanterns
 
 Every block in the tag `foundation:attracts_fireflies` gets fireflies at night – outdoors, no rain, and only while lit
-(if the block has a `lit` property).
+(if the block has a `lit` property, or `luminance` for a `LampBlock`).
 
 **Turn it on** (client init). Pass your config switch – Foundation has none:
 

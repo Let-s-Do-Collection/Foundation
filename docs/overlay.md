@@ -58,3 +58,7 @@ Modifiers: `withLines(...)`, `withRows(...)`, `withPlaceholder(texture)`, `withD
 ## Config switch
 
 Foundation has no config. Return `List.of()` from `describe` when your mod's "block info" option is off.
+
+## Notices from the server
+
+`BlockInfoOverlay.showNotice(pos, text)` shows a short golden notice at a block, client side. From the server use `BlockNotice.send(serverPlayer, pos, text)`, or `send(serverPlayer, pos, title, lines)` for a title with more lines below.

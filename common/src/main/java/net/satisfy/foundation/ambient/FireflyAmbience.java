@@ -1,5 +1,6 @@
 package net.satisfy.foundation.ambient;
 
+import net.satisfy.foundation.block.LampBlock;
 import dev.architectury.event.events.client.ClientTickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -64,7 +65,7 @@ public final class FireflyAmbience {
             if (!state.is(FoundationTags.ATTRACTS_FIREFLIES) || random.nextInt(CHANCE) != 0) {
                 continue;
             }
-            if (state.hasProperty(BlockStateProperties.LIT) && !state.getValue(BlockStateProperties.LIT)) {
+            if (state.hasProperty(BlockStateProperties.LIT) && !state.getValue(BlockStateProperties.LIT) || state.hasProperty(LampBlock.LUMINANCE) && !state.getValue(LampBlock.LUMINANCE)) {
                 continue;
             }
             if (!Fireflies.isActive(level, pos)) {

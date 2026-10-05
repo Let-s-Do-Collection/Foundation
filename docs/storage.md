@@ -42,3 +42,17 @@ StorageBlockEntityRenderer.registerStorageType(MyMod.identifier("spice_rack"), (
 ```
 
 The id passed to `registerStorageType` must match `type()` of the block.
+
+## Wall shelf
+
+Ready-made 9 slot wall shelf, needs a full block behind it:
+
+```java
+public static final RegistrySupplier<Block> SHELF = registerWithItem("shelf",
+        () -> new WallShelfBlock(Properties.ofFullCopy(Blocks.OAK_PLANKS), MyBlockEntities.STORAGE, MyMod.identifier("shelf"), stack -> !(stack.getItem() instanceof BlockItem)));
+
+// client
+StorageBlockEntityRenderer.registerStorageType(MyMod.identifier("shelf"), new WallShelfRenderer());
+```
+
+Own hitbox: pass the north facing shape as last argument.

@@ -44,4 +44,6 @@ DisplayItemRenderer.renderUpright(stack, poseStack, buffers, light, overlay, lev
 | `util.StreamCodecUtil` | stream codec helpers |
 | `render.ClientUtil` | light level at a position, GUI item rendering |
 | `text.TextEditableBlockEntity` + `SetTextPacket` | blocks with editable text (signs, bowls): implement the interface, send `SetTextPacket.sendToServer(...)` |
+| `client.render.FluidBoxRenderer` | `renderWaterBox(...)`: biome tinted water inside a block entity (tubs, tanks, basins) |
+| `fabric.datagen.ModelGenHelper` (Fabric module) | datagen shortcuts: `blockId`, `variantIds`, `slabFromTexture` … |
 | `advancement.SimplePlayerTrigger` | "player did X" advancement trigger: register one per event, call `trigger(player)` |

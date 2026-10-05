@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -103,9 +104,18 @@ public class StackableBlock extends Block {
                 if (!player.isCreative()) {
                     stack.shrink(1);
                 }
+                if (!world.isClientSide) {
+                    SoundType sound = state.getSoundType();
+                    world.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * (0.9F + world.random.nextFloat() * 0.2F));
+                }
                 return ItemInteractionResult.SUCCESS;
             }
         } else if (stack.isEmpty()) {
+            if (!world.isClientSide) {
+                SoundType sound = state.getSoundType();
+                world.playSound(null, pos, sound.getHitSound(), SoundSource.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 1.1F);
+                world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.3F, 1.0F + world.random.nextFloat() * 0.2F);
+            }
             if (state.getValue(STACK_PROPERTY) > 1) {
                 world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1), 3);
             } else if (state.getValue(STACK_PROPERTY) == 1) {
@@ -120,7 +130,7 @@ public class StackableBlock extends Block {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        VoxelShape shape = world.getBlockState(pos.below()).getShape(world, pos.below());
+        VoxelShape shape = world.getBlockState(pos.below()).getBlockSupportShape(world, pos.below());
         Direction direction = Direction.UP;
         return Block.isFaceFull(shape, direction);
     }

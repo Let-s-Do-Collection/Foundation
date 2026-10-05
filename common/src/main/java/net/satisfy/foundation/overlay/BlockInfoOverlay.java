@@ -1,5 +1,7 @@
 package net.satisfy.foundation.overlay;
 
+import java.util.Map;
+import java.util.HashMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.architectury.event.events.client.ClientGuiEvent;
 import net.minecraft.client.Camera;
@@ -48,10 +50,19 @@ public final class BlockInfoOverlay {
     private static final int NOTICE_BORDER_BOTTOM = 0xF0A0641E;
 
     private static final List<BlockInfoProvider> PROVIDERS = new ArrayList<>();
+    private static final Map<BlockPos, PanelState> PANEL_STATES = new HashMap<>();
+    private static final float STICKY_MARGIN = 24.0F;
+    private static final float SMOOTHING_MILLIS = 60.0F;
+    private static final long STATE_TIMEOUT = 500L;
+    private static final int MAX_PANEL_STATES = 32;
+
+    private record PanelState(float x, float y, float scale, float targetScale, boolean above, long lastSeen) {
+    }
     private static final List<Supplier<Collection<BlockPos>>> TRACKERS = new ArrayList<>();
     private static boolean initialized;
     private static BlockPos noticePos;
     private static Component noticeMessage;
+    private static List<Component> noticeLines = List.of();
     private static long noticeStart;
 
     private BlockInfoOverlay() {
@@ -72,8 +83,13 @@ public final class BlockInfoOverlay {
 
     /** Shows a short golden notice at a block for ~2 seconds, fades out at the end. */
     public static void showNotice(BlockPos pos, Component message) {
+        showNotice(pos, message, List.of());
+    }
+
+    public static void showNotice(BlockPos pos, Component title, List<Component> lines) {
         noticePos = pos.immutable();
-        noticeMessage = message;
+        noticeMessage = title;
+        noticeLines = List.copyOf(lines);
         noticeStart = System.currentTimeMillis();
     }
 
@@ -118,7 +134,7 @@ public final class BlockInfoOverlay {
         float alpha = Mth.clamp((NOTICE_DURATION - elapsed) / (float) NOTICE_FADE, 0.0F, 1.0F);
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
-        drawPanel(graphics, minecraft, noticePos, minecraft.level.getBlockState(noticePos), null, List.of(InfoSection.title(noticeMessage)), false, true);
+        drawPanel(graphics, minecraft, noticePos, minecraft.level.getBlockState(noticePos), null, List.of(noticeLines.isEmpty() ? InfoSection.title(noticeMessage) : InfoSection.lines(noticeMessage, noticeLines)), false, true);
         graphics.flush();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         return noticePos;
@@ -150,23 +166,47 @@ public final class BlockInfoOverlay {
         for (int i = 0; i < sections.size(); i++) {
             height += sections.get(i).height() + (i > 0 ? SEPARATOR_HEIGHT : 0);
         }
+        PanelState previous = PANEL_STATES.get(pos);
+        long now = System.currentTimeMillis();
+        boolean fresh = previous == null || now - previous.lastSeen > STATE_TIMEOUT;
         float scale = SIDE_SCALE;
         float x;
         float y = -1.0F;
+        boolean placedAbove = false;
         for (float candidate : ABOVE_SCALES) {
             float panelTop = above.get()[1] - height * candidate - PANEL_GAP;
-            if (panelTop >= SCREEN_MARGIN) {
+            boolean sticky = !fresh && previous.above && previous.targetScale == candidate;
+            if (panelTop >= SCREEN_MARGIN - (sticky ? STICKY_MARGIN : 0.0F)) {
                 scale = candidate;
                 y = panelTop;
+                placedAbove = true;
                 break;
             }
         }
-        if (y >= 0.0F) {
+        if (placedAbove && !fresh && !previous.above) {
+            float panelTop = above.get()[1] - height * scale - PANEL_GAP;
+            if (panelTop < SCREEN_MARGIN + STICKY_MARGIN) {
+                placedAbove = false;
+            }
+        }
+        if (placedAbove) {
             x = above.get()[0] - width * scale / 2.0F;
         } else {
+            scale = SIDE_SCALE;
             Optional<float[]> edge = project(minecraft, graphics, center.add(new Vec3(minecraft.gameRenderer.getMainCamera().getLeftVector()).scale(-SIDE_OFFSET)));
             x = (edge.isPresent() ? edge.get()[0] : middle.get()[0] + width * scale) + PANEL_GAP;
             y = middle.get()[1] - height * scale / 2.0F;
+        }
+        float targetScale = scale;
+        if (!fresh) {
+            float blend = 1.0F - (float) Math.exp(-(now - previous.lastSeen) / SMOOTHING_MILLIS);
+            x = Mth.lerp(blend, previous.x, x);
+            y = Mth.lerp(blend, previous.y, y);
+            scale = Mth.lerp(blend, previous.scale, scale);
+        }
+        PANEL_STATES.put(pos.immutable(), new PanelState(x, y, scale, targetScale, placedAbove, now));
+        if (PANEL_STATES.size() > MAX_PANEL_STATES) {
+            PANEL_STATES.entrySet().removeIf(entry -> now - entry.getValue().lastSeen > STATE_TIMEOUT);
         }
         if (clamp) {
             x = Math.clamp(x, SCREEN_MARGIN, graphics.guiWidth() - width * scale - SCREEN_MARGIN);

@@ -12,13 +12,15 @@ import net.minecraft.network.codec.StreamCodec;
 import net.satisfy.foundation.Foundation;
 import org.jetbrains.annotations.NotNull;
 
-/** All particle types the lib ships. {@code DYE_SPLASH} and {@code FEATHER} take a color. */
+/** All particle types the lib ships. {@code DYE_SPLASH}, {@code FEATHER} and the {@code COLORED_SOUP_*} bubbles take a color. */
 public final class FoundationParticles {
     public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Foundation.MOD_ID, Registries.PARTICLE_TYPE);
 
     public static final RegistrySupplier<SimpleParticleType> SOUP_BUBBLE = PARTICLE_TYPES.register("soup_bubble", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> SOUP_STEAM = PARTICLE_TYPES.register("soup_steam", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> SOUP_COOKING_BUBBLE = PARTICLE_TYPES.register("soup_cooking_bubble", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<ParticleType<ColorParticleOption>> COLORED_SOUP_BUBBLE = PARTICLE_TYPES.register("colored_soup_bubble", FoundationParticles::colored);
+    public static final RegistrySupplier<ParticleType<ColorParticleOption>> COLORED_SOUP_COOKING_BUBBLE = PARTICLE_TYPES.register("colored_soup_cooking_bubble", FoundationParticles::colored);
     public static final RegistrySupplier<ParticleType<ColorParticleOption>> DYE_SPLASH = PARTICLE_TYPES.register("dye_splash", FoundationParticles::colored);
     public static final RegistrySupplier<ParticleType<ColorParticleOption>> FEATHER = PARTICLE_TYPES.register("feather", FoundationParticles::colored);
     public static final RegistrySupplier<SimpleParticleType> WATER_DRIP = PARTICLE_TYPES.register("water_drip", () -> new SimpleParticleType(false) {});

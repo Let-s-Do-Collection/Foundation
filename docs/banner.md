@@ -40,3 +40,7 @@ The model layer is registered by Foundation.
 "tooltip.mymod.banner.thankyou_3": "Thank you for playing My Mod!",
 "tooltip.mymod.banner.thankyou_4": "Grants Regeneration in a radius of 8 blocks"
 ```
+
+Values from a config? Pass suppliers for radius and amplifier: `new BannerSettings(..., MobEffects.DAMAGE_RESISTANCE, MyConfig::bannerRadius, MyConfig::bannerAmplifier)`.
+
+A radius of 0 turns the effect off, handy for a config switch: `() -> MyConfig.bannerEffect ? MyConfig.bannerRadius : 0`.

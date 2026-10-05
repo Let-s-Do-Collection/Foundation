@@ -24,7 +24,7 @@ public final class ShapeUtil {
 
     public static boolean isFaceFull(LevelReader levelReader, BlockPos blockPos) {
         BlockPos belowPos = blockPos.below();
-        return Block.isFaceFull(levelReader.getBlockState(belowPos).getShape(levelReader, belowPos), Direction.UP);
+        return Block.isFaceFull(levelReader.getBlockState(belowPos).getBlockSupportShape(levelReader, belowPos), Direction.UP);
     }
 
     public static boolean isSolid(LevelReader levelReader, BlockPos blockPos) {

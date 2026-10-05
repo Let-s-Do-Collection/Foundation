@@ -4,8 +4,17 @@ import net.satisfy.foundation.util.ShapeUtil;
 import net.minecraft.core.BlockPos;
 import net.satisfy.foundation.registry.FoundationParticles;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -49,7 +58,7 @@ import java.util.function.Supplier;
  * empty hand), take water back out again. Drips a bit on the client.
  */
 @SuppressWarnings({"unused", "deprecation"})
-public class SinkBlock extends Block {
+public class SinkBlock extends Block implements EntityBlock {
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
     public static final EnumProperty<DoubleBlockHalf> HALF = EnumProperty.create("half", DoubleBlockHalf.class);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -105,43 +114,114 @@ public class SinkBlock extends Block {
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        if (world.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER) return ItemInteractionResult.SUCCESS;
-        Item item = itemStack.getItem();
-        if (itemStack.isEmpty() && !state.getValue(FILLED)) {
-            world.setBlock(pos, state.setValue(FILLED, true), Block.UPDATE_ALL);
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
-            return ItemInteractionResult.SUCCESS;
-        } else if ((item == Items.WATER_BUCKET || item == Items.GLASS_BOTTLE) && !state.getValue(FILLED)) {
-            world.setBlock(pos, state.setValue(FILLED, true), Block.UPDATE_ALL);
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
-            if (!player.isCreative()) {
-                if (item == Items.WATER_BUCKET) {
-                    itemStack.shrink(1);
-                    player.addItem(new ItemStack(Items.BUCKET));
-                } else {
-                    itemStack.shrink(1);
-                    player.addItem(new ItemStack(Items.GLASS_BOTTLE));
-                }
-            }
-            return ItemInteractionResult.SUCCESS;
-        } else if ((item == Items.BUCKET || item == Items.GLASS_BOTTLE) && state.getValue(FILLED)) {
-            world.setBlock(pos, state.setValue(FILLED, false), Block.UPDATE_ALL);
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
-            if (!player.isCreative()) {
-                if (item == Items.BUCKET) {
-                    itemStack.shrink(1);
-                    player.addItem(new ItemStack(Items.WATER_BUCKET));
-                } else {
-                    itemStack.shrink(1);
-                    PotionContents potionContents = new PotionContents(Potions.WATER);
-                    ItemStack potionStack = new ItemStack(Items.POTION);
-                    potionStack.set(DataComponents.POTION_CONTENTS, potionContents);
-                    player.addItem(potionStack);
-                }
-            }
-            return ItemInteractionResult.SUCCESS;
+        if (itemStack.isEmpty()) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        SinkBlockEntity sink = sinkAt(world, pos, state);
+        if (sink == null) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        int water = sink.getWaterLevel();
+        ItemStack result = ItemStack.EMPTY;
+        int change = 0;
+        if (itemStack.is(Items.WATER_BUCKET) && water < SinkBlockEntity.MAX_LEVEL) {
+            result = new ItemStack(Items.BUCKET);
+            change = SinkBlockEntity.MAX_LEVEL - water;
+        } else if (itemStack.is(Items.BUCKET) && water == SinkBlockEntity.MAX_LEVEL) {
+            result = new ItemStack(Items.WATER_BUCKET);
+            change = -water;
+        } else if (itemStack.is(Items.GLASS_BOTTLE) && water > 0) {
+            result = PotionContents.createItemStack(Items.POTION, Potions.WATER);
+            change = -1;
+        } else if (isWaterBottle(itemStack) && water < SinkBlockEntity.MAX_LEVEL) {
+            result = new ItemStack(Items.GLASS_BOTTLE);
+            change = 1;
+        } else if (water > 0) {
+            result = washed(itemStack);
+            change = result.isEmpty() ? 0 : -1;
+        }
+        if (change == 0) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (!world.isClientSide) {
+            sink.setWaterLevel(water + change);
+            world.playSound(null, pos, change > 0 ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.8F, 1.0F);
+            if (!player.getAbilities().instabuild) {
+                itemStack.shrink(1);
+                if (!player.getInventory().add(result)) {
+                    player.drop(result, false);
+                }
+            }
+        }
+        return ItemInteractionResult.sidedSuccess(world.isClientSide);
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        SinkBlockEntity sink = sinkAt(world, pos, state);
+        if (sink == null) {
+            return InteractionResult.PASS;
+        }
+        if (!world.isClientSide) {
+            if (player.isOnFire() && sink.getWaterLevel() > 0) {
+                player.clearFire();
+                sink.setWaterLevel(sink.getWaterLevel() - 1);
+                world.playSound(null, pos, SoundEvents.GENERIC_EXTINGUISH_FIRE, SoundSource.BLOCKS, 0.8F, 1.2F);
+            } else {
+                sink.toggle();
+            }
+        }
+        return InteractionResult.sidedSuccess(world.isClientSide);
+    }
+
+    private static boolean isWaterBottle(ItemStack stack) {
+        PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+        return stack.is(Items.POTION) && contents != null && contents.is(Potions.WATER);
+    }
+
+    private static ItemStack washed(ItemStack stack) {
+        if (stack.is(ItemTags.DYEABLE) && stack.has(DataComponents.DYED_COLOR)) {
+            ItemStack clean = stack.copyWithCount(1);
+            clean.remove(DataComponents.DYED_COLOR);
+            return clean;
+        }
+        BannerPatternLayers layers = stack.get(DataComponents.BANNER_PATTERNS);
+        if (stack.getItem() instanceof BannerItem && layers != null && !layers.layers().isEmpty()) {
+            ItemStack clean = stack.copyWithCount(1);
+            clean.set(DataComponents.BANNER_PATTERNS, layers.removeLast());
+            return clean;
+        }
+        if (Block.byItem(stack.getItem()) instanceof ShulkerBoxBlock box && box.getColor() != null) {
+            return stack.transmuteCopy(Items.SHULKER_BOX, 1);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public static @Nullable SinkBlockEntity sinkAt(Level world, BlockPos pos, BlockState state) {
+        BlockPos base = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+        return world.getBlockEntity(base) instanceof SinkBlockEntity sink ? sink : null;
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(HALF) == DoubleBlockHalf.LOWER ? new SinkBlockEntity(pos, state) : null;
+    }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        if (world.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER) {
+            return null;
+        }
+        return (level, pos, blockState, blockEntity) -> {
+            if (blockEntity instanceof SinkBlockEntity sink) {
+                SinkBlockEntity.serverTick(level, pos, blockState, sink);
+            }
+        };
+    }
+
+    @Override
+    protected @NotNull RenderShape getRenderShape(BlockState state) {
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? RenderShape.INVISIBLE : RenderShape.MODEL;
     }
 
     @Override
@@ -241,20 +321,32 @@ public class SinkBlock extends Block {
 
     @Override
     public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource randomSource) {
-        float chance = randomSource.nextFloat();
-        if (chance < 0.1F) {
-            spawnDripParticle(world, pos, state);
+        if (state.getValue(HALF) != DoubleBlockHalf.UPPER || !(world.getBlockEntity(pos.below()) instanceof SinkBlockEntity sink)) {
+            return;
+        }
+        Vec3 spout = spout(pos, state.getValue(FACING));
+        if (sink.isOpen()) {
+            world.addParticle(ParticleTypes.FALLING_WATER, spout.x, spout.y, spout.z, 0.0, 0.0, 0.0);
+            world.addParticle(FoundationParticles.WATER_DRIP.get(), spout.x, spout.y, spout.z, 0.0, 0.0, 0.0);
+            if (randomSource.nextInt(3) == 0) {
+                double surface = pos.getY() - 1 + (12.0 + Math.max(1, sink.getWaterLevel())) / 16.0;
+                world.addParticle(FoundationParticles.WATER_SPLASH.get(), spout.x, surface, spout.z, 0.0, 0.0, 0.0);
+            }
+            if (randomSource.nextInt(20) == 0) {
+                world.playLocalSound(spout.x, spout.y, spout.z, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.3F, 1.4F, false);
+            }
+        } else if (randomSource.nextFloat() < 0.05F) {
+            world.addParticle(FoundationParticles.WATER_DRIP.get(), spout.x, spout.y, spout.z, 0.0, 0.0, 0.0);
         }
     }
 
-    /** Spawns a single water drip under the tap. */
-    public static void spawnDripParticle(Level level, BlockPos blockPos, BlockState blockState) {
-        Vec3 vec3 = blockState.getOffset(level, blockPos);
-        double d = 0.0625;
-        double e = (double) blockPos.getX() + 0.5 + vec3.x;
-        double f = (double) ((float) (blockPos.getY() + 0.9) - 0.6875F) - d;
-        double g = (double) blockPos.getZ() + 0.5 + vec3.z;
-        ParticleOptions particleOptions = FoundationParticles.WATER_DRIP.get();
-        level.addParticle(particleOptions, e, f, g, 0.0, 0.0, 0.0);
+    public static Vec3 spout(BlockPos upper, Direction facing) {
+        double x = 8.0 / 16.0, z = 9.0 / 16.0;
+        for (int turn = 0; turn < (int) (facing.toYRot() / 90.0F + 2) % 4; turn++) {
+            double rotated = 1.0 - z;
+            z = x;
+            x = rotated;
+        }
+        return new Vec3(upper.getX() + x, upper.getY() + 0.22, upper.getZ() + z);
     }
 }

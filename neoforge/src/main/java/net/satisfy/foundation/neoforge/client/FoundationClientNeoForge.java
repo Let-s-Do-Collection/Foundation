@@ -40,6 +40,8 @@ public class FoundationClientNeoForge {
         event.registerSpriteSet(FoundationParticles.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.COLORED_SOUP_BUBBLE.get(), SoupBubbleParticle.ColoredProvider::new);
+        event.registerSpriteSet(FoundationParticles.COLORED_SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.ColoredProvider::new);
         event.registerSpriteSet(FoundationParticles.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.FEATHER.get(), FeatherParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.WATER_DRIP.get(), WaterDripParticle.Provider::new);
