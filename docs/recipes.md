@@ -1,5 +1,32 @@
 # Recipes (`net.satisfy.foundation.recipe`, `net.satisfy.foundation.compat`)
 
+## Station recipe book
+
+The green recipe book from the crafting table, for any modded station. Same look (vanilla textures), search, "only craftable" filter, pages. Clicking a recipe fills the inputs from the inventory (shift = as many as fit); if items are missing, the ingredients are shown as ghosts in the slots.
+
+```java
+// menu
+public class StoveMenu extends AbstractContainerMenu implements StationRecipeBookMenu {
+    @Override public RecipeType<?> recipeBookType() { return MyRecipes.STOVE.get(); }
+    @Override public int[] recipeBookInputSlots() { return new int[]{0, 1, 2}; } // ingredient i -> menu slot i
+    @Override public boolean recipeBookRequiresUnlock() { return true; }         // optional, hides locked recipes
+}
+
+// screen: extend StationRecipeBookScreen instead of AbstractContainerScreen, nothing else to call
+public class StoveScreen extends StationRecipeBookScreen<StoveMenu> { ... }
+```
+
+Stations with several recipe types (e.g. apple press: mashing + fermenting) get one vanilla tab per type:
+
+```java
+@Override public List<RecipeType<?>> recipeBookTypes() { return List.of(MASHING.get(), FERMENTING.get()); }
+@Override public int[] recipeBookInputSlots(RecipeType<?> type) { return type == MASHING.get() ? new int[]{0} : new int[]{1}; }
+```
+
+Override `recipeBookButtonX()` / `recipeBookButtonY()` to move the button. Screens that can't extend the base class can forward the calls to a `StationRecipeBook` themselves (see `StationRecipeBookScreen`).
+
+With `recipeBookRequiresUnlock()` a recipe shows up once its id **or** its recipe type is unlocked. Unlocks are synced to the client on join and on every change.
+
 ## Recipe unlock book
 
 Stations can lock recipe **types** until the player reads a book.
@@ -14,7 +41,7 @@ if (RecipeUnlockManager.isRecipeLocked(serverPlayer, BuiltInRegistries.RECIPE_TY
 ItemStack book = GrandmothersRecipeBookItem.createUnlockerForRecipes(MyItems.RECIPE_BOOK.get(), "mymod:pie", "mymod:tart");
 ```
 
-Unlocks are stored per world (saved data `farm_and_charm_recipe_unlock_data`, kept for old worlds).
+The book item saves the recipe ids, `RecipeUnlockManager.unlockRecipes` saves whole recipe types. Unlocks are stored per world (saved data `farm_and_charm_recipe_unlock_data`, kept for old worlds).
 
 ## REI / JEI layout helpers
 

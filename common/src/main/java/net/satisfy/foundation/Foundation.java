@@ -6,6 +6,8 @@ import net.satisfy.foundation.overlay.BlockInfoSync;
 import net.satisfy.foundation.registry.FoundationBlockEntities;
 import net.satisfy.foundation.registry.FoundationEntities;
 import net.satisfy.foundation.registry.FoundationParticles;
+import net.satisfy.foundation.recipe.RecipeUnlockSync;
+import net.satisfy.foundation.recipe.book.PlaceRecipePacket;
 import net.satisfy.foundation.text.SetTextPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,8 @@ public class Foundation {
         BlockInfoSync.init();
         BlockNotice.init();
         SetTextPacket.init();
+        RecipeUnlockSync.init();
+        PlaceRecipePacket.init();
     }
 
     /** Shortcut for {@code foundation:<path>}, saves some typing. */

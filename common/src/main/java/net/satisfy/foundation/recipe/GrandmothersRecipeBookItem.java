@@ -31,12 +31,9 @@ import java.util.*;
 /**
  * Consumable item that "unlocks" one or more recipes on use.
  * Recipe ids are stored in custom data ({@code Recipe} or {@code Recipes}).
- *
- * TODO: unlocked state only lives in memory, gone after restart.
+ * Unlocks are saved through {@link RecipeUnlockManager}.
  */
 public class GrandmothersRecipeBookItem extends Item {
-    private static final Map<ServerLevel, Map<UUID, Set<ResourceLocation>>> worldUnlockedRecipes = new HashMap<>();
-
     public GrandmothersRecipeBookItem(Properties properties) {
         super(properties);
     }
@@ -88,11 +85,8 @@ public class GrandmothersRecipeBookItem extends Item {
                     recipeIds.add(ResourceLocation.parse(data.copyTag().getString("Recipe")));
                 }
                 if (!recipeIds.isEmpty()) {
-                    ServerLevel serverLevel = (ServerLevel) serverPlayer.level();
-                    Map<UUID, Set<ResourceLocation>> worldMap = worldUnlockedRecipes.computeIfAbsent(serverLevel, k -> new HashMap<>());
-                    Set<ResourceLocation> unlocked = worldMap.computeIfAbsent(serverPlayer.getUUID(), k -> new HashSet<>());
-                    ResourceLocation firstId = recipeIds.get(0);
-                    if (unlocked.contains(firstId)) {
+                    Set<ResourceLocation> unlocked = RecipeUnlockManager.loadUnlockedRecipes(serverPlayer);
+                    if (unlocked.containsAll(recipeIds)) {
                         serverPlayer.displayClientMessage(Component.translatable("tooltip.foundation.recipe_unlocker.already_unlocked")
                                 .withStyle(ChatFormatting.RED), false);
                         return InteractionResultHolder.success(stack);
@@ -102,9 +96,9 @@ public class GrandmothersRecipeBookItem extends Item {
                     for (ResourceLocation id : recipeIds) {
                         Optional<? extends RecipeHolder<?>> opt = manager.byKey(id);
                         opt.ifPresent(recipes::add);
-                        unlocked.add(id);
                     }
                     if (!recipes.isEmpty()) {
+                        RecipeUnlockManager.unlockRecipeIds(serverPlayer, recipeIds);
                         RecipeHolder<?> firstRecipe = recipes.get(0);
                         ItemStack resultStack = firstRecipe.value().getResultItem(level.registryAccess());
                         MutableComponent message = Component.literal("")
