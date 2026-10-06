@@ -7,5 +7,6 @@
   "tooltip.foundation.recipe_unlocker.unlocks": "Unlocks: ",
   "tooltip.foundation.canbeplacedwall": "Can be placed on walls",
   "gui.foundation.wall_decoration.edit": "Write on it",
-  "tooltip.foundation.set_bonus": "Full Set Bonus:"
+  "tooltip.foundation.set_bonus": "Full Set Bonus:",
+  "gui.foundation.recipe_book.ingredients": "Ingredients:"
 }

@@ -23,6 +23,19 @@ Stations with several recipe types (e.g. apple press: mashing + fermenting) get 
 @Override public int[] recipeBookInputSlots(RecipeType<?> type) { return type == MASHING.get() ? new int[]{0} : new int[]{1}; }
 ```
 
+The tooltip of a recipe lists its ingredients. Optional hooks on the menu (all client side):
+
+| Hook | Use |
+|---|---|
+| `recipeBookTabName(type)` | tooltip of the tab |
+| `recipeBookExtrasMet(recipe)` | things outside the input slots (fluid, bottle...); false shows the recipe as not craftable, ingredients can still be placed |
+| `recipeBookResultSlot(type)` | menu slot of the result, the ghost shows the result there |
+| `recipeBookExtraInputs(recipe)` | slot -> ingredient outside the recipe (bottle, bowl...), placed and counted like an ingredient |
+| `recipeBookExtraGhosts(recipe)` | slot -> ingredient shown as ghost only (juice, bottle...), never placed |
+| `appendRecipeBookTooltip(recipe, lines)` | extra tooltip lines, e.g. needed fluid and current fill level |
+
+`StationRecipeBook#getGhost()` returns the clicked recipe, e.g. to extend own tooltips.
+
 Override `recipeBookButtonX()` / `recipeBookButtonY()` to move the button. Screens that can't extend the base class can forward the calls to a `StationRecipeBook` themselves (see `StationRecipeBookScreen`).
 
 With `recipeBookRequiresUnlock()` a recipe shows up once its id **or** its recipe type is unlocked. Unlocks are synced to the client on join and on every change.

@@ -45,7 +45,7 @@ Coming from Farm & Charm's old helpers? See the [migration table](docs/migration
 **2. `gradle.properties`**
 
 ```properties
-foundation_version=1.0.0
+foundation_version=1.0.1
 ```
 
 **3. Root `build.gradle`** – inside `allprojects { repositories { … } }`:

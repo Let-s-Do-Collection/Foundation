@@ -1,6 +1,7 @@
 package net.satisfy.foundation.client.gui.recipebook;
 
 import dev.architectury.networking.NetworkManager;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -20,10 +21,14 @@ import net.satisfy.foundation.recipe.book.PlaceRecipePacket;
 import net.satisfy.foundation.recipe.book.RecipePlacer;
 import net.satisfy.foundation.recipe.book.StationRecipeBookMenu;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Vanilla styled recipe book panel for station menus implementing {@link StationRecipeBookMenu}.
@@ -48,6 +53,7 @@ public class StationRecipeBook {
     private static final ResourceLocation FILTER_DISABLED_HIGHLIGHTED = ResourceLocation.withDefaultNamespace("recipe_book/filter_disabled_highlighted");
     private static final Component SEARCH_HINT = Component.translatable("gui.recipebook.search_hint");
     private static final Component ONLY_CRAFTABLE = Component.translatable("gui.recipebook.toggleRecipes.craftable");
+    private static final Component INGREDIENTS = Component.translatable("gui.foundation.recipe_book.ingredients");
     private static final Component ALL_RECIPES = Component.translatable("gui.recipebook.toggleRecipes.all");
     private static final int COLUMNS = 5;
     private static final int ROWS = 4;
@@ -72,7 +78,8 @@ public class StationRecipeBook {
     private RecipeHolder<?> ghost;
     private float ghostTime;
 
-    private record Entry(RecipeHolder<?> recipe, ItemStack result, boolean craftable) {
+    /** placeable: items are there, craftable: placeable and the station extras are met. */
+    private record Entry(RecipeHolder<?> recipe, ItemStack result, boolean placeable, boolean craftable) {
     }
 
     public <M extends AbstractContainerMenu & StationRecipeBookMenu> void init(int screenWidth, int screenHeight, Minecraft minecraft, M menu) {
@@ -129,11 +136,12 @@ public class StationRecipeBook {
             if (!query.isEmpty() && !result.getHoverName().getString().toLowerCase(Locale.ROOT).contains(query)) {
                 continue;
             }
-            boolean craftable = RecipePlacer.canCraft(minecraft.player.getInventory(), menu, slotsFor(recipe), recipe.value().getIngredients());
+            boolean placeable = RecipePlacer.canCraft(minecraft.player.getInventory(), menu, book.recipeBookPlacementSlots(recipe), book.recipeBookPlacementIngredients(recipe));
+            boolean craftable = placeable && book.recipeBookExtrasMet(recipe);
             if (onlyCraftable && !craftable) {
                 continue;
             }
-            entries.add(new Entry(recipe, result, craftable));
+            entries.add(new Entry(recipe, result, placeable, craftable));
         }
         entries.sort(Comparator.comparing((Entry entry) -> !entry.craftable).thenComparing(entry -> entry.result.getHoverName().getString()));
         page = Mth.clamp(page, 0, pageCount() - 1);
@@ -225,10 +233,41 @@ public class StationRecipeBook {
             graphics.renderTooltip(minecraft.font, onlyCraftable ? ONLY_CRAFTABLE : ALL_RECIPES, mouseX, mouseY);
             return;
         }
+        if (hasTabs()) {
+            List<RecipeType<?>> types = book.recipeBookTypes();
+            for (int i = 0; i < types.size(); i++) {
+                Component name = book.recipeBookTabName(types.get(i));
+                if (name != null && isOver(mouseX, mouseY, x - 30, tabY(i), 35, 27)) {
+                    graphics.renderTooltip(minecraft.font, name, mouseX, mouseY);
+                    return;
+                }
+            }
+        }
         int hovered = hoveredButton(mouseX, mouseY);
         if (hovered >= 0) {
-            graphics.renderTooltip(minecraft.font, entries.get(hovered).result, mouseX, mouseY);
+            Entry entry = entries.get(hovered);
+            List<Component> lines = new ArrayList<>(Screen.getTooltipFromItem(minecraft, entry.result));
+            lines.add(INGREDIENTS.copy().withStyle(ChatFormatting.GRAY));
+            for (Map.Entry<String, Integer> ingredient : countIngredients(entry.recipe).entrySet()) {
+                lines.add(Component.literal(" " + ingredient.getValue() + "× " + ingredient.getKey()).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            book.appendRecipeBookTooltip(entry.recipe, lines);
+            graphics.renderComponentTooltip(minecraft.font, lines, mouseX, mouseY);
         }
+    }
+
+    /** Ingredient name -> count, the name cycles through the options like the ghost does. */
+    private Map<String, Integer> countIngredients(RecipeHolder<?> recipe) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (Ingredient ingredient : book.recipeBookPlacementIngredients(recipe)) {
+            ItemStack[] items = ingredient.getItems();
+            if (items.length == 0) {
+                continue;
+            }
+            ItemStack shown = items[(int) (minecraft.level.getGameTime() / 20 % items.length)];
+            counts.merge(shown.getHoverName().getString(), 1, Integer::sum);
+        }
+        return counts;
     }
 
     /** Draws the missing ingredients of the last clicked recipe into the input slots. */
@@ -239,24 +278,46 @@ public class StationRecipeBook {
         if (!Screen.hasControlDown()) {
             ghostTime += partialTick;
         }
-        List<Ingredient> ingredients = ghost.value().getIngredients();
-        int[] slots = slotsFor(ghost);
+        List<Ingredient> ingredients = book.recipeBookPlacementIngredients(ghost);
+        int[] slots = book.recipeBookPlacementSlots(ghost);
         for (int i = 0; i < ingredients.size() && i < slots.length; i++) {
-            ItemStack[] items = ingredients.get(i).getItems();
-            Slot slot = menu.getSlot(slots[i]);
-            if (items.length == 0 || slot.hasItem()) {
-                continue;
-            }
-            ItemStack stack = items[Mth.floor(ghostTime / 30.0F) % items.length];
-            int sx = leftPos + slot.x;
-            int sy = topPos + slot.y;
-            graphics.fill(sx, sy, sx + 16, sy + 16, 0x30FF0000);
-            graphics.renderFakeItem(stack, sx, sy);
-            graphics.pose().pushPose();
-            graphics.pose().translate(0, 0, 200);
-            graphics.fill(sx, sy, sx + 16, sy + 16, 0x30FFFFFF);
-            graphics.pose().popPose();
+            renderGhostSlot(graphics, leftPos, topPos, slots[i], ingredients.get(i));
         }
+        book.recipeBookExtraGhosts(ghost).forEach((slot, ingredient) -> renderGhostSlot(graphics, leftPos, topPos, slot, ingredient));
+        int resultSlot = book.recipeBookResultSlot(ghost.value().getType());
+        if (resultSlot >= 0) {
+            ItemStack result = ghost.value().getResultItem(minecraft.level.registryAccess());
+            renderGhostSlot(graphics, leftPos, topPos, resultSlot, Ingredient.of(result));
+            Slot slot = menu.getSlot(resultSlot);
+            if (!slot.hasItem()) {
+                graphics.pose().pushPose();
+                graphics.pose().translate(0, 0, 250);
+                graphics.renderItemDecorations(minecraft.font, result, leftPos + slot.x, topPos + slot.y);
+                graphics.pose().popPose();
+            }
+        }
+    }
+
+    private void renderGhostSlot(GuiGraphics graphics, int leftPos, int topPos, int slotIndex, Ingredient ingredient) {
+        ItemStack[] items = ingredient.getItems();
+        Slot slot = menu.getSlot(slotIndex);
+        if (items.length == 0 || slot.hasItem()) {
+            return;
+        }
+        ItemStack stack = items[Mth.floor(ghostTime / 30.0F) % items.length];
+        int sx = leftPos + slot.x;
+        int sy = topPos + slot.y;
+        graphics.fill(sx, sy, sx + 16, sy + 16, 0x30FF0000);
+        graphics.renderFakeItem(stack, sx, sy);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 200);
+        graphics.fill(sx, sy, sx + 16, sy + 16, 0x30FFFFFF);
+        graphics.pose().popPose();
+    }
+
+    /** Recipe shown as ghost right now, null if none. */
+    public @Nullable RecipeHolder<?> getGhost() {
+        return ghost;
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -298,7 +359,7 @@ public class StationRecipeBook {
         int hovered = hoveredButton(mouseX, mouseY);
         if (hovered >= 0) {
             Entry entry = entries.get(hovered);
-            if (entry.craftable) {
+            if (entry.placeable) {
                 ghost = null;
                 NetworkManager.sendToServer(new PlaceRecipePacket(menu.containerId, entry.recipe.id(), Screen.hasShiftDown()));
             } else if (inputsEmpty(slotsFor(entry.recipe))) {

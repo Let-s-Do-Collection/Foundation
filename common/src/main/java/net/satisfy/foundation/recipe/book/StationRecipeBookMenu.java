@@ -1,8 +1,15 @@
 package net.satisfy.foundation.recipe.book;
 
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implement on a station menu to get the recipe book.
@@ -35,5 +42,67 @@ public interface StationRecipeBookMenu {
     /** If true, only recipes unlocked through {@link net.satisfy.foundation.recipe.RecipeUnlockManager} show up. */
     default boolean recipeBookRequiresUnlock() {
         return false;
+    }
+
+    /** Tooltip of the tab, null for none. */
+    default @Nullable Component recipeBookTabName(RecipeType<?> type) {
+        return null;
+    }
+
+    /**
+     * Requirements outside the input slots (fluid, fuel...). When false the recipe shows as not craftable,
+     * the ingredients can still be placed. Called on the client.
+     */
+    default boolean recipeBookExtrasMet(RecipeHolder<?> recipe) {
+        return true;
+    }
+
+    /** Extra tooltip lines below the ingredients, e.g. needed fluid. Called on the client. */
+    default void appendRecipeBookTooltip(RecipeHolder<?> recipe, List<Component> tooltip) {
+    }
+
+    /** Extra ghosts for a clicked recipe, menu slot index -> ingredient (juice, bottle...). Only shown, never placed. */
+    default Map<Integer, Ingredient> recipeBookExtraGhosts(RecipeHolder<?> recipe) {
+        return Map.of();
+    }
+
+    /**
+     * Items outside the recipe ingredients that the book places too (bottle, bowl...), menu slot index -> ingredient.
+     * They count for "craftable" like normal ingredients. Called on both sides.
+     */
+    default Map<Integer, Ingredient> recipeBookExtraInputs(RecipeHolder<?> recipe) {
+        return Map.of();
+    }
+
+    /** Input slots of the recipe followed by the slots of {@link #recipeBookExtraInputs}. */
+    default int[] recipeBookPlacementSlots(RecipeHolder<?> recipe) {
+        int[] inputs = recipeBookInputSlots(recipe.value().getType());
+        Map<Integer, Ingredient> extras = recipeBookExtraInputs(recipe);
+        if (extras.isEmpty()) {
+            return inputs;
+        }
+        int[] slots = Arrays.copyOf(inputs, recipe.value().getIngredients().size() + extras.size());
+        int i = recipe.value().getIngredients().size();
+        for (int slot : extras.keySet()) {
+            slots[i++] = slot;
+        }
+        return slots;
+    }
+
+    /** Ingredients of the recipe followed by {@link #recipeBookExtraInputs}, matching {@link #recipeBookPlacementSlots}. */
+    default NonNullList<Ingredient> recipeBookPlacementIngredients(RecipeHolder<?> recipe) {
+        Map<Integer, Ingredient> extras = recipeBookExtraInputs(recipe);
+        if (extras.isEmpty()) {
+            return recipe.value().getIngredients();
+        }
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+        ingredients.addAll(recipe.value().getIngredients());
+        ingredients.addAll(extras.values());
+        return ingredients;
+    }
+
+    /** Menu slot index where the result of this type ends up, the ghost shows the result there. -1 for none. */
+    default int recipeBookResultSlot(RecipeType<?> type) {
+        return -1;
     }
 }

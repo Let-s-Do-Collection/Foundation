@@ -7,5 +7,6 @@
   "tooltip.foundation.recipe_unlocker.unlocks": "Schaltet frei: %s",
   "tooltip.foundation.canbeplacedwall": "Kann an Wände gehängt werden",
   "gui.foundation.wall_decoration.edit": "Beschriften",
-  "tooltip.foundation.set_bonus": "Set-Bonus (volles Set):"
+  "tooltip.foundation.set_bonus": "Set-Bonus (volles Set):",
+  "gui.foundation.recipe_book.ingredients": "Zutaten:"
 }

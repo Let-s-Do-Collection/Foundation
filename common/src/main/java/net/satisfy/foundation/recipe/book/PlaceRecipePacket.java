@@ -41,7 +41,7 @@ public record PlaceRecipePacket(int containerId, ResourceLocation recipe, boolea
         if (book.recipeBookRequiresUnlock() && !RecipeUnlockManager.isUnlocked(player, recipe)) {
             return;
         }
-        RecipePlacer.place(player.getInventory(), menu, book.recipeBookInputSlots(recipe.value().getType()), recipe.value().getIngredients(), packet.max);
+        RecipePlacer.place(player.getInventory(), menu, book.recipeBookPlacementSlots(recipe), book.recipeBookPlacementIngredients(recipe), packet.max);
         menu.broadcastChanges();
     }
 
