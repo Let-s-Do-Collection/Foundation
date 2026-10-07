@@ -12,25 +12,26 @@ ships it inside its own jar (jar-in-jar), and the loader always picks the newest
 
 | Area | Package | What it gives you | Guide |
 |---|---|---|---|
-| HUD panels | `overlay` | "Look at a block, see what to do" panels | [overlay.md](docs/overlay.md) |
-| Creative tabs | `client.creative` | Categories as side tabs on the left of your creative tab | [creative_tabs.md](docs/creative_tabs.md) |
-| Armor | `armor`, `client.armor` | Textured and dyeable armor items, custom 3D armor models, armor sets with set tooltips | [armor.md](docs/armor.md) |
-| Model templates | `assets/foundation/models` | Shared parent models for cabinets, drawers, tables and wall decorations | [models.md](docs/models.md) |
-| Tooltips | `tooltip` | "Can be placed" + `[SHIFT]` details, coloured tooltip borders | [tooltips.md](docs/tooltips.md) |
-| Particles | `particle`, `registry` | Soup, steam, water, dye splash, feather, firefly, drifting leaves/fluff | [particles.md](docs/particles.md) |
-| Ambience | `ambient` | Fireflies around lanterns at night | [ambient.md](docs/ambient.md) |
-| Seats | `seat`, `block` | Chairs, benches, anything you can sit on | [seating.md](docs/seating.md) |
-| Storage | `storage` | Shelves / racks that show their items, ready-made wall shelf | [storage.md](docs/storage.md) |
-| Food | `food` | Food & drinks with effects, placeable dishes, ingredient effects | [food.md](docs/food.md) |
-| Blocks | `block` | Facing, line-connecting, stackable, cake, berry bush, sink, wardrobe, dresser, window, shutter … | [blocks.md](docs/blocks.md) |
-| Woods | `wood`, `client.wood` | Signs, hanging signs, boats and chest boats for custom wood types | [wood.md](docs/wood.md) |
-| Menus | `menu` | Filtered slots, result slots with XP | [menus.md](docs/menus.md) |
-| Mob AI | `entity.ai` | Attack goal that waits for the animation, random idle actions | [entity_ai.md](docs/entity_ai.md) |
-| Banner | `banner` | The Completionist Banner every mod gets | [banner.md](docs/banner.md) |
-| Recipes | `recipe`, `compat` | Recipe unlock book, REI/JEI layout helpers | [recipes.md](docs/recipes.md) |
-| Utilities | `util`, `render`, `text`, `advancement` | Registration, shapes, dyeing, item rendering, triggers … | [utilities.md](docs/utilities.md) |
+| HUD panels | `overlay` | "Look at a block, see what to do" panels | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/HUD-Panels) |
+| Creative tabs | `client.creative` | Categories as side tabs on the left of your creative tab | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Creative-Tabs) |
+| Armor | `armor`, `client.armor` | Textured and dyeable armor items, custom 3D armor models, armor sets with set tooltips | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Armor) |
+| Model templates | `assets/foundation/models` | Shared parent models for cabinets, drawers, tables and wall decorations | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Model-Templates) |
+| Tooltips | `tooltip` | "Can be placed" + `[SHIFT]` details, coloured tooltip borders | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Tooltips) |
+| Rarity | `rarity` | Custom item rarities: solid, gradient and animated name colors with a label line | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Rarity) |
+| Particles | `particle`, `registry` | Soup, steam, water, dye splash, feather, firefly, drifting leaves/fluff | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Particles) |
+| Ambience | `ambient` | Fireflies around lanterns at night | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Ambience) |
+| Seats | `seat`, `block` | Chairs, benches, anything you can sit on | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Seats) |
+| Storage | `storage` | Shelves / racks that show their items, ready-made wall shelf | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Storage) |
+| Food | `food` | Food & drinks with effects, placeable dishes, ingredient effects | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Food) |
+| Blocks | `block` | Facing, line-connecting, stackable, cake, berry bush, sink, wardrobe, dresser, window, shutter … | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Blocks) |
+| Woods | `wood`, `client.wood` | Signs, hanging signs, boats and chest boats for custom wood types | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Woods) |
+| Menus | `menu` | Filtered slots, result slots with XP | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Menus) |
+| Mob AI | `entity.ai` | Attack goal that waits for the animation, random idle actions | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Mob-AI) |
+| Banner | `banner` | The Completionist Banner every mod gets | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Banner) |
+| Recipes | `recipe`, `compat` | Recipe unlock book, REI/JEI layout helpers | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Recipes) |
+| Utilities | `util`, `render`, `text`, `advancement` | Registration, shapes, dyeing, item rendering, triggers … | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Utilities) |
 
-Coming from Farm & Charm's old helpers? See the [migration table](docs/migration.md).
+Coming from Farm & Charm's old helpers? See the [migration table](https://github.com/Let-s-Do-Collection/Foundation/wiki/Migration).
 
 ---
 

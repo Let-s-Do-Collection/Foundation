@@ -20,3 +20,6 @@ classes/
 *.launch.DS_Store
 .DS_Store
 .architectury-transformer/
+
+# Local clone of the GitHub wiki (own repo)
+/wiki/

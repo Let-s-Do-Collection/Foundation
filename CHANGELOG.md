@@ -2,6 +2,7 @@
 
 **Added**
 * Built-in recipe book
+* Custom rarities 
 
 ***
 
