@@ -3,7 +3,7 @@
   "id": "foundation",
   "version": "${version}",
   "name": "[Let's Do] Foundation",
-  "description": "Shared library for the Let's Do mods.",
+  "description": "The shared core library of the Let's Do mods: HUD panels, tooltips, seats, storage, food, armor, wood and more. Bundled with every Let's Do mod, no manual install needed.",
   "authors": [
     "satisfy"
   ],
@@ -12,7 +12,7 @@
     "sources": "https://github.com/Let-s-Do-Collection/Foundation",
     "homepage": "https://www.lets-do.ch"
   },
-  "license": "custom",
+  "license": "Custom",
   "icon": "pack.png",
   "environment": "*",
   "entrypoints": {
@@ -28,8 +28,9 @@
     "foundation-common.mixins.json"
   ],
   "depends": {
+    "fabricloader": ">=0.16.14",
     "fabric-api": "*",
-    "minecraft": ">=1.21",
-    "architectury": ">=13.0.0"
+    "minecraft": ">=1.21.1 <1.22",
+    "architectury": ">=13.0.8"
   }
 }

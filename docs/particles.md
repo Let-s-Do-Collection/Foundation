@@ -9,6 +9,7 @@ Registered and rendered by Foundation – just spawn them.
 | `SOUP_STEAM` | `foundation:soup_steam` | simple | slow rising steam |
 | `WATER_DRIP` | `foundation:water_drip` | simple | drop falling from a tap |
 | `WATER_SPLASH` | `foundation:water_splash` | simple | small splash |
+| `COLORED_DRIP` | `foundation:colored_drip` | colour | drop in any colour, hangs, falls and lands (juice from a barrel tap …) |
 | `DYE_SPLASH` | `foundation:dye_splash` | colour | coloured splash (dyeing, oil …) |
 | `FEATHER` | `foundation:feather` | colour | feather drifting down |
 | `COLORED_STEAM` | `foundation:colored_steam` | colour | steam in any colour (black smoke from a dying fire …) |

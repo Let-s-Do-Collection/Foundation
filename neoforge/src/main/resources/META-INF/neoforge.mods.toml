@@ -15,7 +15,8 @@ version = "${version}"
 displayName = "[Let's Do] Foundation"
 authors = "satisfy"
 description = '''
-Shared library for the Let's Do mods.
+The shared core library of the Let's Do mods: HUD panels, tooltips, seats, storage, food, armor, wood and more.
+Bundled with every Let's Do mod, no manual install needed.
 '''
 logoFile = "pack.png"
 displayURL = "https://www.lets-do.ch"
@@ -23,20 +24,20 @@ displayURL = "https://www.lets-do.ch"
 [[dependencies.foundation]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.0,)"
+versionRange = "[21.1,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.foundation]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21,)"
+versionRange = "[1.21.1,1.22)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.foundation]]
 modId = "architectury"
 type = "required"
-versionRange = "[13.0.0,)"
+versionRange = "[13.0.8,)"
 ordering = "AFTER"
 side = "BOTH"

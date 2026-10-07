@@ -12,6 +12,8 @@ import net.satisfy.foundation.client.FoundationClient;
 import net.satisfy.foundation.client.render.SinkRenderer;
 import net.satisfy.foundation.client.render.StackRenderer;
 import net.satisfy.foundation.registry.FoundationBlockEntities;
+import net.satisfy.foundation.particle.DriftingParticle;
+import net.satisfy.foundation.particle.ColoredDripParticle;
 import net.satisfy.foundation.particle.DyeSplashParticle;
 import net.satisfy.foundation.particle.FeatherParticle;
 import net.satisfy.foundation.particle.FireflyParticle;
@@ -55,8 +57,10 @@ public class FoundationClientNeoForge {
         event.registerSpriteSet(FoundationParticles.COLORED_SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.ColoredProvider::new);
         event.registerSpriteSet(FoundationParticles.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.FEATHER.get(), FeatherParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.COLORED_DRIP.get(), ColoredDripParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.WATER_DRIP.get(), WaterDripParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.WATER_SPLASH.get(), WaterSplashParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.FIREFLY.get(), FireflyParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.LEAF.get(), sprites -> new DriftingParticle.Provider(sprites, DriftingParticle.Style.LEAF, DriftingParticle.MotionProfile.LEAF));
     }
 }

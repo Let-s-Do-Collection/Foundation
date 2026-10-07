@@ -8,5 +8,14 @@
   "tooltip.foundation.canbeplacedwall": "Can be placed on walls",
   "gui.foundation.wall_decoration.edit": "Write on it",
   "tooltip.foundation.set_bonus": "Full Set Bonus:",
-  "gui.foundation.recipe_book.ingredients": "Ingredients:"
+  "gui.foundation.recipe_book.ingredients": "Ingredients:",
+  "rarity.foundation.common": "Common",
+  "rarity.foundation.uncommon": "Uncommon",
+  "rarity.foundation.rare": "Rare",
+  "rarity.foundation.epic": "Epic",
+  "rarity.foundation.mythic": "Mythic",
+  "rarity.foundation.legendary": "Legendary",
+  "rarity.foundation.celestial": "Celestial",
+  "rarity.foundation.divine": "Divine",
+  "rarity.foundation.eternal": "Eternal"
 }

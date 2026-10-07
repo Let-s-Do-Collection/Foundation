@@ -1,10 +1,10 @@
 package net.satisfy.foundation.banner;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -126,12 +126,13 @@ public class CompletionistBannerBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.add(Component.translatable(this.settings.tooltipPrefix() + ".thankyou_1").withStyle(style -> style.withColor(TextColor.fromRgb(0xa5b485))));
+        String prefix = this.settings.tooltipPrefix();
+        tooltip.add(Component.translatable(prefix + ".thankyou_1").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         tooltip.add(Component.empty());
-        tooltip.add(Component.translatable(this.settings.tooltipPrefix() + ".thankyou_2").withStyle(style -> style.withColor(TextColor.fromRgb(0xa5b485))));
-        tooltip.add(Component.translatable(this.settings.tooltipPrefix() + ".thankyou_4").withStyle(style -> style.withColor(TextColor.fromRgb(0xa5b485))));
+        tooltip.add(Component.translatable(prefix + ".thankyou_2").withStyle(ChatFormatting.DARK_PURPLE));
+        tooltip.add(Component.translatable(prefix + ".thankyou_4").withStyle(ChatFormatting.BLUE));
         tooltip.add(Component.empty());
-        tooltip.add(Component.translatable(this.settings.tooltipPrefix() + ".thankyou_3").withStyle(style -> style.withColor(TextColor.fromRgb(0xa5b485))));
+        tooltip.add(Component.translatable(prefix + ".thankyou_3").withStyle(ChatFormatting.GOLD));
     }
 
 }
