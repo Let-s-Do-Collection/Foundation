@@ -5,6 +5,7 @@
   "minVersion": "0.8",
   "client": [
     "CreativeModeInventoryScreenMixin",
+    "FogRendererMixin",
     "GuiMixin",
     "TooltipRenderUtilMixin"
   ],

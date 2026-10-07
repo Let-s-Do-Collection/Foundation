@@ -77,6 +77,8 @@ public class StationRecipeBook {
     private int lastMenuState = -1;
     private RecipeHolder<?> ghost;
     private float ghostTime;
+    private int ghostLeft;
+    private int ghostTop;
 
     /** placeable: items are there, craftable: placeable and the station extras are met. */
     private record Entry(RecipeHolder<?> recipe, ItemStack result, boolean placeable, boolean craftable) {
@@ -226,6 +228,9 @@ public class StationRecipeBook {
     }
 
     public void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (renderGhostTooltip(graphics, mouseX, mouseY)) {
+            return;
+        }
         if (!open) {
             return;
         }
@@ -275,6 +280,8 @@ public class StationRecipeBook {
         if (ghost == null) {
             return;
         }
+        ghostLeft = leftPos;
+        ghostTop = topPos;
         if (!Screen.hasControlDown()) {
             ghostTime += partialTick;
         }
@@ -296,6 +303,37 @@ public class StationRecipeBook {
                 graphics.pose().popPose();
             }
         }
+    }
+
+    /** Tooltip of the ghost item under the mouse, same item the slot shows right now. */
+    private boolean renderGhostTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (ghost == null) {
+            return false;
+        }
+        Map<Integer, Ingredient> slots = new LinkedHashMap<>();
+        List<Ingredient> ingredients = book.recipeBookPlacementIngredients(ghost);
+        int[] placement = book.recipeBookPlacementSlots(ghost);
+        for (int i = 0; i < ingredients.size() && i < placement.length; i++) {
+            slots.put(placement[i], ingredients.get(i));
+        }
+        slots.putAll(book.recipeBookExtraGhosts(ghost));
+        int resultSlot = book.recipeBookResultSlot(ghost.value().getType());
+        if (resultSlot >= 0) {
+            slots.put(resultSlot, Ingredient.of(ghost.value().getResultItem(minecraft.level.registryAccess())));
+        }
+        for (Map.Entry<Integer, Ingredient> entry : slots.entrySet()) {
+            ItemStack[] items = entry.getValue().getItems();
+            Slot slot = menu.getSlot(entry.getKey());
+            if (items.length == 0 || slot.hasItem()) {
+                continue;
+            }
+            if (isOver(mouseX, mouseY, ghostLeft + slot.x, ghostTop + slot.y, 16, 16)) {
+                ItemStack stack = items[Mth.floor(ghostTime / 30.0F) % items.length];
+                graphics.renderTooltip(minecraft.font, stack, mouseX, mouseY);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void renderGhostSlot(GuiGraphics graphics, int leftPos, int topPos, int slotIndex, Ingredient ingredient) {
