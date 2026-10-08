@@ -102,5 +102,6 @@ tasks.register("curseforge", net.darkhax.curseforgegradle.TaskPublishCurseForge)
     mainFile.addModLoader("NeoForge")
     mainFile.addGameVersion(rootProject.minecraft_version)
     mainFile.addJavaVersion("Java 21")
+    mainFile.addEnvironment("Client", "Server")
         mainFile.addRequirement("architectury-api")
 }

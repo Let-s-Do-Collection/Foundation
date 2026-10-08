@@ -98,6 +98,7 @@ tasks.register("curseforge", net.darkhax.curseforgegradle.TaskPublishCurseForge)
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(rootProject.minecraft_version)
     mainFile.addJavaVersion("Java 21")
+    mainFile.addEnvironment("Client", "Server")
         mainFile.addRequirement("fabric-api")
         mainFile.addRequirement("architectury-api")
 }
