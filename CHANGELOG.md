@@ -1,3 +1,10 @@
+[1.0.3]
+
+**Added**
+* Flammable blocks (`FoundationFlammables`): register blocks with wood, wool, hay or plant presets, or custom fire odds, applied automatically on common setup
+
+***
+
 [1.0.2]
 
 **Added**
