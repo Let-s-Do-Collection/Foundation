@@ -215,8 +215,8 @@ public final class BlockInfoOverlay {
             PANEL_STATES.entrySet().removeIf(entry -> now - entry.getValue().lastSeen > STATE_TIMEOUT);
         }
         if (clamp) {
-            x = Math.clamp(x, SCREEN_MARGIN, graphics.guiWidth() - width * scale - SCREEN_MARGIN);
-            y = Math.clamp(y, SCREEN_MARGIN, graphics.guiHeight() - height * scale - SCREEN_MARGIN);
+            x = Math.clamp(x, SCREEN_MARGIN, Math.max(SCREEN_MARGIN, graphics.guiWidth() - width * scale - SCREEN_MARGIN));
+            y = Math.clamp(y, SCREEN_MARGIN, Math.max(SCREEN_MARGIN, graphics.guiHeight() - height * scale - SCREEN_MARGIN));
         }
         graphics.flush();
         RenderSystem.enableBlend();

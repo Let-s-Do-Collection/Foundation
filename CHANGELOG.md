@@ -1,3 +1,10 @@
+[1.0.4]
+
+**Fixed**
+* Crash when a block info panel is larger than the available screen space
+
+***
+
 [1.0.3]
 
 **Added**

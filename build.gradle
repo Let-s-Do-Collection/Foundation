@@ -1,6 +1,29 @@
 plugins {
     id "architectury-plugin" version "3.4.162"
     id "dev.architectury.loom" version "1.10.437" apply false
+    id "com.modrinth.minotaur" version "2.8.7" apply false
+    id "net.darkhax.curseforgegradle" version "1.1.25" apply false
+}
+
+ext.latestChangelog = {
+    def text = file("CHANGELOG.md").text
+    def end = text.indexOf("***")
+    (end >= 0 ? text.substring(0, end) : text).trim()
+}
+
+tasks.register("publishModrinth") {
+    group = "publishing"
+    dependsOn ":fabric:modrinth", ":neoforge:modrinth"
+}
+
+tasks.register("publishCurseForge") {
+    group = "publishing"
+    dependsOn ":fabric:curseforge", ":neoforge:curseforge"
+}
+
+tasks.register("publishAll") {
+    group = "publishing"
+    dependsOn "publishModrinth", "publishCurseForge"
 }
 
 subprojects {

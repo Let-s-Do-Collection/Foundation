@@ -1,5 +1,7 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "8.0.0"
+    id "com.modrinth.minotaur"
+    id "net.darkhax.curseforgegradle"
 }
 
 archivesBaseName = 'letsdo-foundation-neoforge'
@@ -72,4 +74,33 @@ publishing {
             from components.java
         }
     }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "lets-do-foundation"
+    versionNumber = "${rootProject.mod_version}-neoforge"
+    versionName = "Foundation ${rootProject.mod_version} NeoForge"
+    versionType = "release"
+    uploadFile = remapJar
+    gameVersions = [rootProject.minecraft_version]
+    loaders = ["neoforge"]
+    changelog = rootProject.latestChangelog()
+    dependencies {
+        required.project "architectury-api"
+    }
+}
+
+tasks.register("curseforge", net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    group = "publishing"
+    apiToken = System.getenv("CURSEFORGE_TOKEN")
+    def mainFile = upload(1733606, remapJar)
+    mainFile.displayName = "Foundation ${rootProject.mod_version} NeoForge"
+    mainFile.releaseType = "release"
+    mainFile.changelog = rootProject.latestChangelog()
+    mainFile.changelogType = "markdown"
+    mainFile.addModLoader("NeoForge")
+    mainFile.addGameVersion(rootProject.minecraft_version)
+    mainFile.addJavaVersion("Java 21")
+        mainFile.addRequirement("architectury-api")
 }
