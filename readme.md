@@ -1,10 +1,7 @@
 # [Let's Do] Foundation
 
-The shared library behind the Let's Do mods (Minecraft 1.21.1, Fabric & NeoForge via Architectury).
-
 Foundation holds the things every Let's Do mod needs but no single mod should own: HUD panels, tooltips, seats, storage
-shelves, food with effects, particles, banners and a handful of helpers. Players never install it by hand – every mod
-ships it inside its own jar (jar-in-jar), and the loader always picks the newest copy.
+shelves, food with effects, particles, banners and a handful of helpers. 
 
 ---
 
