@@ -3,6 +3,7 @@ package net.satisfy.foundation.fabric.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.satisfy.foundation.client.FoundationClient;
+import net.satisfy.foundation.fabric.client.mimic.FabricMimicModel;
 import net.satisfy.foundation.particle.DriftingParticle;
 import net.satisfy.foundation.particle.ColoredDripParticle;
 import net.satisfy.foundation.particle.DyeSplashParticle;
@@ -20,6 +21,7 @@ public class FoundationClientFabric implements ClientModInitializer {
     public void onInitializeClient() {
         FoundationClient.preInitClient();
         registerParticles();
+        FabricMimicModel.register();
         FoundationClient.registerBlockEntityRenderers();
         FoundationClient.onInitializeClient();
     }

@@ -1,3 +1,17 @@
+[1.0.5]
+
+**Added**
+* Mimic blocks (`MimicBlockEntity`, `MimicBlock`, `MimicModels`): blocks that take on the texture of an applied block or render a held block, with shared saving, syncing, drops and models on Fabric and NeoForge
+* Compostables (`FoundationCompostables`): register compostable items once with presets or custom chances, works on Fabric and NeoForge (NeoForge ignores the vanilla compostables map)
+* Villager trades (`SellItemFactory`, `BuyForOneEmeraldFactory`): shared trade listings for selling and buying items for emeralds
+* Zombie equipment (`ZombieEquipment`): give spawning zombies items with a chance, optionally adults only, without a mixin in your mod
+* Placeable drinks (`PlaceableDrinkItem`): drink items that can be placed as blocks, with optional crouch to place, drinking at any time, a returned container and an effect tooltip
+
+**Fixed**
+* Effect tooltips of `EffectDrinkItem`, `EffectFoodItem` and `PlaceableEffectFoodItem` showing shorter durations for effects with a chance below 100%
+
+***
+
 [1.0.4]
 
 **Fixed**

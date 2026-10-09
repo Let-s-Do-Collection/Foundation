@@ -6,7 +6,10 @@
   "client": [
     "TexturedArmorItemMixin"
   ],
-  "mixins": [],
+  "mixins": [
+    "ComposterBlockMixin",
+    "MimicBlockEntityMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

@@ -9,7 +9,9 @@
     "GuiMixin",
     "TooltipRenderUtilMixin"
   ],
-  "mixins": [],
+  "mixins": [
+    "ZombieMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

@@ -5,12 +5,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.foundation.Foundation;
 import net.satisfy.foundation.client.FoundationClient;
 import net.satisfy.foundation.client.render.SinkRenderer;
 import net.satisfy.foundation.client.render.StackRenderer;
+import net.satisfy.foundation.neoforge.client.mimic.NeoForgeMimicModel;
 import net.satisfy.foundation.registry.FoundationBlockEntities;
 import net.satisfy.foundation.particle.DriftingParticle;
 import net.satisfy.foundation.particle.ColoredDripParticle;
@@ -39,6 +41,11 @@ public class FoundationClientNeoForge {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(FoundationClient::onInitializeClient);
+    }
+
+    @SubscribeEvent
+    public static void wrapMimicModels(ModelEvent.ModifyBakingResult event) {
+        NeoForgeMimicModel.wrap(event);
     }
 
     @SubscribeEvent

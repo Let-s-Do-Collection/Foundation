@@ -22,10 +22,14 @@ ships it inside its own jar (jar-in-jar), and the loader always picks the newest
 | Ambience | `ambient` | Fireflies around lanterns at night | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Ambience) |
 | Seats | `seat`, `block` | Chairs, benches, anything you can sit on | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Seats) |
 | Storage | `storage` | Shelves / racks that show their items, ready-made wall shelf | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Storage) |
-| Food | `food` | Food & drinks with effects, placeable dishes, ingredient effects | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Food) |
+| Compostables | `compostable` | Compostable items on Fabric and NeoForge | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Compostables) |
+| Villager trades | `trade` | Sell and buy trades for emeralds | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Villager-Trades) |
+| Zombie equipment | `entity.equipment` | Items for spawning zombies, without your own mixin | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Zombie-Equipment) |
+| Food | `food` | Food & drinks with effects, placeable dishes and drinks, ingredient effects | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Food) |
 | Blocks | `block` | Facing, line-connecting, stackable, cake, berry bush, sink, wardrobe, dresser, window, shutter … | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Blocks) |
 | Woods | `wood`, `client.wood` | Signs, hanging signs, boats and chest boats for custom wood types | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Woods) |
 | Menus | `menu` | Filtered slots, result slots with XP | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Menus) |
+| Mimic blocks | `block.mimic`, `client.mimic` | Blocks that take on the texture of an applied block or show a stored block | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Mimic-Blocks) |
 | Mob AI | `entity.ai` | Attack goal that waits for the animation, random idle actions | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Mob-AI) |
 | Banner | `banner` | The Completionist Banner every mod gets | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Banner) |
 | Recipes | `recipe`, `compat` | Recipe unlock book, REI/JEI layout helpers | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Recipes) |
