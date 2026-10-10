@@ -1,3 +1,9 @@
+[1.0.6]
+
+**Added**
+* Fly particle (`FoundationParticles.FLY`): a fly buzzing around its spawn point, a positive x speed sets the base lifetime in ticks
+* Needle particle (`FoundationParticles.NEEDLE`): falling conifer needles tinted with the evergreen foliage color
+
 [1.0.5]
 
 **Added**

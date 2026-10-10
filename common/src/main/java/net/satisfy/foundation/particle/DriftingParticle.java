@@ -9,6 +9,7 @@ import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.FoliageColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,7 @@ public class DriftingParticle extends TextureSheetParticle {
 
     public enum Style {
         LEAF(0.98F, 0.82F, 0.88F, false),
+        NEEDLE(0.98F, 0.82F, 0.88F, false),
         FLUFF(0.96F, 0.85F, 0.9F, true);
 
         private final float friction;
@@ -84,9 +86,9 @@ public class DriftingParticle extends TextureSheetParticle {
         this.growthSpeed = profile.growthSpeed;
         this.alpha = 0.0F;
 
-        if (style == Style.LEAF) {
+        if (style != Style.FLUFF) {
             this.roll = random.nextFloat() * Mth.TWO_PI;
-            int foliage = level.getBiome(BlockPos.containing(x, y, z)).value().getFoliageColor();
+            int foliage = style == Style.NEEDLE ? FoliageColor.getEvergreenColor() : level.getBiome(BlockPos.containing(x, y, z)).value().getFoliageColor();
             this.rCol = (foliage >> 16 & 255) / 255.0F;
             this.gCol = (foliage >> 8 & 255) / 255.0F;
             this.bCol = (foliage & 255) / 255.0F;
@@ -132,7 +134,7 @@ public class DriftingParticle extends TextureSheetParticle {
         move(xd, yd, zd);
 
         if (onGround) {
-            if (style == Style.LEAF) {
+            if (style != Style.FLUFF) {
                 xd = 0.0D;
                 zd = 0.0D;
                 rotationSpeed = 0.0F;
@@ -143,7 +145,7 @@ public class DriftingParticle extends TextureSheetParticle {
             yd = 0.0D;
         }
 
-        if (style == Style.LEAF) {
+        if (style != Style.FLUFF) {
             roll += rotationSpeed;
         } else {
             roll = Mth.sin(progress * Mth.TWO_PI + swayPhase) * 0.12F;

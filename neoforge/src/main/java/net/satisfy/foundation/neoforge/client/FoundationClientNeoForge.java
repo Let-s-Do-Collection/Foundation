@@ -19,6 +19,7 @@ import net.satisfy.foundation.particle.ColoredDripParticle;
 import net.satisfy.foundation.particle.DyeSplashParticle;
 import net.satisfy.foundation.particle.FeatherParticle;
 import net.satisfy.foundation.particle.FireflyParticle;
+import net.satisfy.foundation.particle.FlyParticle;
 import net.satisfy.foundation.particle.SoupBubbleParticle;
 import net.satisfy.foundation.particle.SoupCookingBubbleParticle;
 import net.satisfy.foundation.particle.SoupSteamParticle;
@@ -68,6 +69,8 @@ public class FoundationClientNeoForge {
         event.registerSpriteSet(FoundationParticles.WATER_DRIP.get(), WaterDripParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.WATER_SPLASH.get(), WaterSplashParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.FIREFLY.get(), FireflyParticle.Provider::new);
+        event.registerSpriteSet(FoundationParticles.FLY.get(), FlyParticle.Provider::new);
         event.registerSpriteSet(FoundationParticles.LEAF.get(), sprites -> new DriftingParticle.Provider(sprites, DriftingParticle.Style.LEAF, DriftingParticle.MotionProfile.LEAF));
+        event.registerSpriteSet(FoundationParticles.NEEDLE.get(), sprites -> new DriftingParticle.Provider(sprites, DriftingParticle.Style.NEEDLE, DriftingParticle.MotionProfile.LEAF));
     }
 }

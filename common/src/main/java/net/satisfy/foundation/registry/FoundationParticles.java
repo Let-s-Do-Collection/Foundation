@@ -28,7 +28,10 @@ public final class FoundationParticles {
     public static final RegistrySupplier<SimpleParticleType> WATER_DRIP = PARTICLE_TYPES.register("water_drip", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> WATER_SPLASH = PARTICLE_TYPES.register("water_splash", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> FIREFLY = PARTICLE_TYPES.register("firefly", () -> new SimpleParticleType(false) {});
+    /** Buzzing fly circling its spawn point. A positive x speed sets the base lifetime in ticks. */
+    public static final RegistrySupplier<SimpleParticleType> FLY = PARTICLE_TYPES.register("fly", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<SimpleParticleType> LEAF = PARTICLE_TYPES.register("leaf", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> NEEDLE = PARTICLE_TYPES.register("needle", () -> new SimpleParticleType(false) {});
 
     private static ParticleType<ColorParticleOption> colored() {
         return new ParticleType<>(false) {
