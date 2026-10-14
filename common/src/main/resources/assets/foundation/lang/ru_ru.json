@@ -1,0 +1,21 @@
+{
+  "tooltip.foundation.canbeplaced": "Можно поставить",
+  "tooltip.foundation.hold_shift": "Удерживайте %s для подробностей",
+  "tooltip.foundation.recipe_unlocker.already_unlocked": "Вы уже выучили этот рецепт!",
+  "tooltip.foundation.recipe_unlocker.recipe_suffix": " Рецепт",
+  "tooltip.foundation.recipe_unlocker.unlocked.prefix": "Рецепт получен:",
+  "tooltip.foundation.recipe_unlocker.unlocks": "Открывает: ",
+  "tooltip.foundation.canbeplacedwall": "Можно повесить",
+  "gui.foundation.wall_decoration.edit": "Оставьте надпись",
+  "tooltip.foundation.set_bonus": "Бонус полного комплекта:",
+  "gui.foundation.recipe_book.ingredients": "Ингредиенты",
+  "rarity.foundation.common": "Обычный",
+  "rarity.foundation.uncommon": "Необычный",
+  "rarity.foundation.rare": "Редкий",
+  "rarity.foundation.epic": "Эпический",
+  "rarity.foundation.mythic": "Мифический",
+  "rarity.foundation.legendary": "Легендарный",
+  "rarity.foundation.celestial": "Небесный",
+  "rarity.foundation.divine": "Божественный",
+  "rarity.foundation.eternal": "Вечный"
+}
