@@ -1,8 +1,18 @@
+[1.0.7]
+
+**Fixed**
+* Long model loading and "Unable to load model" warnings for other mods' models with ModernFix dynamic resources: mimic models are now wrapped only for mimic blocks instead of scanning every model
+* Chair seat entities being saved with the world and left behind after reloading
+
+***
+
 [1.0.6]
 
 **Added**
 * Fly particle (`FoundationParticles.FLY`): a fly buzzing around its spawn point, a positive x speed sets the base lifetime in ticks
 * Needle particle (`FoundationParticles.NEEDLE`): falling conifer needles tinted with the evergreen foliage color
+
+***
 
 [1.0.5]
 

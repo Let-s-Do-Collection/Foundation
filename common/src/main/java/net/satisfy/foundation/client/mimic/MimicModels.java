@@ -6,9 +6,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class MimicModels {
@@ -79,6 +81,17 @@ public final class MimicModels {
 
     public static boolean isMimicModel(Block block) {
         return retextureRule(block) != null || isHeld(block);
+    }
+
+    public static synchronized Set<Block> blocks() {
+        Set<Block> blocks = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Entry entry : RETEXTURED) {
+            blocks.add(entry.block().get());
+        }
+        for (Supplier<? extends Block> supplier : HELD) {
+            blocks.add(supplier.get());
+        }
+        return blocks;
     }
 
     private record Entry(Supplier<? extends Block> block, QuadRule rule) {

@@ -12,7 +12,7 @@ import net.satisfy.foundation.seat.ChairEntity;
 public final class FoundationEntities {
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Foundation.MOD_ID, Registries.ENTITY_TYPE);
 
-    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = ENTITY_TYPES.register("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build(Foundation.identifier("chair").toString()));
+    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = ENTITY_TYPES.register("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).noSave().build(Foundation.identifier("chair").toString()));
 
     private FoundationEntities() {
     }

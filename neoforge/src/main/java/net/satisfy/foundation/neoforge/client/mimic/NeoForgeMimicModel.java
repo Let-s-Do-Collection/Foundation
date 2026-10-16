@@ -2,13 +2,14 @@ package net.satisfy.foundation.neoforge.client.mimic;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.event.ModelEvent;
@@ -33,11 +34,13 @@ public class NeoForgeMimicModel extends BakedModelWrapper<BakedModel> {
 
     public static void wrap(ModelEvent.ModifyBakingResult event) {
         Map<ModelResourceLocation, BakedModel> models = event.getModels();
-        for (Map.Entry<ModelResourceLocation, BakedModel> entry : models.entrySet()) {
-            ModelResourceLocation id = entry.getKey();
-            if (entry.getValue() == null || ModelResourceLocation.INVENTORY_VARIANT.equals(id.variant())) continue;
-            if (MimicModels.isMimicModel(BuiltInRegistries.BLOCK.get(id.id()))) {
-                entry.setValue(new NeoForgeMimicModel(entry.getValue()));
+        for (Block block : MimicModels.blocks()) {
+            for (BlockState state : block.getStateDefinition().getPossibleStates()) {
+                ModelResourceLocation id = BlockModelShaper.stateToModelLocation(state);
+                BakedModel model = models.get(id);
+                if (model != null && !(model instanceof NeoForgeMimicModel)) {
+                    models.put(id, new NeoForgeMimicModel(model));
+                }
             }
         }
     }
