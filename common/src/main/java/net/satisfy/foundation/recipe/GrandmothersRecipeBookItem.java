@@ -1,7 +1,8 @@
 package net.satisfy.foundation.recipe;
 
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
+import net.satisfy.foundation.render.ClientUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -52,12 +54,13 @@ public class GrandmothersRecipeBookItem extends Item {
                 recipeIds.add(ResourceLocation.parse(data.copyTag().getString("Recipe")));
             }
             if (!recipeIds.isEmpty()) {
-                RecipeManager manager = (Minecraft.getInstance().level).getRecipeManager();
+                Level level = Platform.getEnvironment() == Env.CLIENT ? ClientUtil.clientLevel() : null;
+                RecipeManager manager = level != null ? level.getRecipeManager() : null;
                 for (ResourceLocation id : recipeIds) {
-                    Optional<? extends RecipeHolder<?>> opt = manager.byKey(id);
+                    Optional<? extends RecipeHolder<?>> opt = manager != null ? manager.byKey(id) : Optional.empty();
                     if (opt.isPresent()) {
                         RecipeHolder<?> recipe = opt.get();
-                        ItemStack resultStack = recipe.value().getResultItem((Minecraft.getInstance().level).registryAccess());
+                        ItemStack resultStack = recipe.value().getResultItem(level.registryAccess());
                         tooltip.add(Component.translatable("tooltip.foundation.recipe_unlocker.unlocks", resultStack.getHoverName())
                                 .withStyle(ChatFormatting.GRAY));
                     } else {

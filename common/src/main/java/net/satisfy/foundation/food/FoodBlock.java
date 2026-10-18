@@ -12,9 +12,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -116,13 +117,8 @@ public class FoodBlock extends FacingBlock implements EntityBlock {
         world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
         world.gameEvent(player, GameEvent.EAT, pos);
 
-        if (world instanceof Level level) {
-            for (int i = 0; i < 10; ++i) {
-                double dx = level.random.nextGaussian() * 0.02D;
-                double dy = level.random.nextGaussian() * 0.02D;
-                double dz = level.random.nextGaussian() * 0.02D;
-                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dx, dy, dz);
-            }
+        if (world instanceof ServerLevel serverLevel && !stack.isEmpty()) {
+            serverLevel.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 10, 0.2, 0.2, 0.2, 0.05);
         }
 
         int bites = state.getValue(BITES);
@@ -170,11 +166,6 @@ public class FoodBlock extends FacingBlock implements EntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return state.getValue(ANIMATED) ? new StackBlockEntity(pos, state) : null;
-    }
-
-    @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, world, pos, newState, moved);
     }
 
     @Override

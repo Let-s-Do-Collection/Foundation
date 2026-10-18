@@ -1,3 +1,15 @@
+[1.0.9]
+
+**Added**
+* Food blocks spawn eating particles of their item when a bite is taken
+
+**Fixed**
+* Game crash when the first tooltip is rendered, caused by a tooltip frame injection that does not exist in this Minecraft version
+* Rarity tooltip frames not showing on NeoForge
+* Possible crash when a food block without an item is eaten
+* Possible crash when the Grandmother's Recipe Book tooltip is shown while no world is loaded
+
+***
 [1.0.8]
 
 **Added**

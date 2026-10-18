@@ -13,9 +13,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 /** Render shortcuts for block entity renderers, uses the light at the block entity pos. */
 public class ClientUtil {
+
+    public static @Nullable Level clientLevel() {
+        return Minecraft.getInstance().level;
+    }
 
     public static <T extends BlockEntity> void renderBlock(BlockState state, PoseStack matrices, MultiBufferSource vertexConsumers, T entity) {
         Level level = entity.getLevel();
