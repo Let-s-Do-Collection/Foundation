@@ -66,7 +66,7 @@ public class PlaceableIngredientEffectFoodItem extends BlockItem implements Ingr
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         IngredientEffects.getTooltip(itemStack, tooltipContext, tooltip);
         tooltip.add(Component.empty());
-        tooltip.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

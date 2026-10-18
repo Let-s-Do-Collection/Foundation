@@ -1,3 +1,13 @@
+[1.0.11]
+
+**Added**
+* Tooltip frames for Relic (black) and Endless (red) items
+
+**Changed**
+* Relic names now shine in silver and Endless names cycle through shades of red, matching their new frames
+* "Can be placed" tooltips are no longer italic
+
+***
 [1.0.10]
 
 **Added**

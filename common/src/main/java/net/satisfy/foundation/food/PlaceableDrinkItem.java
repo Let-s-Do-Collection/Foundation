@@ -117,6 +117,6 @@ public class PlaceableDrinkItem extends BlockItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         EffectTooltips.append(stack, context, tooltip);
         tooltip.add(Component.empty());
-        tooltip.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.GRAY));
     }
 }

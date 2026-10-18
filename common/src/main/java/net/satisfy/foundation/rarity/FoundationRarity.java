@@ -28,9 +28,9 @@ public final class FoundationRarity {
     public static final FoundationRarity EPIC = solid("epic", 0xBB75D3);
     public static final FoundationRarity MYTHIC = gradient("mythic", 0xFFD166, 0xE58B3A);
     public static final FoundationRarity LEGENDARY = gradient("legendary", 0xF7CB58, 0xFFFF80, 0xF7CB58);
-    public static final FoundationRarity CELESTIAL = gradient("celestial", 0x72C9E8, 0xFFFFFF, 0xB99AFF);
+    public static final FoundationRarity CELESTIAL = gradient("celestial", 0x8C8C8C, 0xE6E6E6, 0x8C8C8C);
     public static final FoundationRarity DIVINE = gradient("divine", 0xFFF8E1, 0xFFD166, 0xE9A4C6, 0xFFF8E1);
-    public static final FoundationRarity ETERNAL = animated("eternal", 0xFFB3B3, 0xFFE29A, 0xB8F2C8, 0xA9D8FF, 0xD6B3FF);
+    public static final FoundationRarity ETERNAL = animated("eternal", 0xFF4D4D, 0xFFA08A, 0xD42A2A);
 
     private final String id;
     private final int[] colors;
