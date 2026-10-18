@@ -12,9 +12,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.foundation.util.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 
-public class WardrobeBlockEntity extends BlockEntity implements Clearable {
+public class WardrobeBlockEntity extends BlockEntity implements Clearable, ImplementedInventory {
     public static final int SLOT_HEAD = 0;
     public static final int SLOT_CHEST = 1;
     public static final int SLOT_LEGS = 2;
@@ -83,5 +84,10 @@ public class WardrobeBlockEntity extends BlockEntity implements Clearable {
     @Override
     public void clearContent() {
         inventory.clear();
+    }
+
+    @Override
+    public NonNullList<ItemStack> getItems() {
+        return getInventory();
     }
 }

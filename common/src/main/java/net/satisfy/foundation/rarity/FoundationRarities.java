@@ -38,6 +38,7 @@ public final class FoundationRarities {
         initialized = true;
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             FoundationRarity rarity = get(stack);
+            RarityTooltipFrame.mark(rarity);
             if (rarity != null && !lines.isEmpty()) {
                 Component name = lines.getFirst();
                 lines.set(0, rarity.apply(name));

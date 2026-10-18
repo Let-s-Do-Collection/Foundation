@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.Util;
 
 import java.util.ArrayList;
@@ -21,12 +22,12 @@ import java.util.List;
 public final class FoundationRarity {
     private static final float ANIMATION_PERIOD_MS = 8000F;
 
-    public static final FoundationRarity COMMON = solid("common", 0xAAAAAA);
-    public static final FoundationRarity UNCOMMON = solid("uncommon", 0x78C878);
-    public static final FoundationRarity RARE = solid("rare", 0x6EA8D8);
-    public static final FoundationRarity EPIC = solid("epic", 0xA77BCB);
+    public static final FoundationRarity COMMON = solid("common", 0xC0CCC7);
+    public static final FoundationRarity UNCOMMON = solid("uncommon", 0x99F189);
+    public static final FoundationRarity RARE = solid("rare", 0x8DB6DC);
+    public static final FoundationRarity EPIC = solid("epic", 0xBB75D3);
     public static final FoundationRarity MYTHIC = gradient("mythic", 0xFFD166, 0xE58B3A);
-    public static final FoundationRarity LEGENDARY = gradient("legendary", 0xDFAE45, 0xFFF0A6, 0xFFF8DC, 0xFFF0A6, 0xDFAE45);
+    public static final FoundationRarity LEGENDARY = gradient("legendary", 0xF7CB58, 0xFFFF80, 0xF7CB58);
     public static final FoundationRarity CELESTIAL = gradient("celestial", 0x72C9E8, 0xFFFFFF, 0xB99AFF);
     public static final FoundationRarity DIVINE = gradient("divine", 0xFFF8E1, 0xFFD166, 0xE9A4C6, 0xFFF8E1);
     public static final FoundationRarity ETERNAL = animated("eternal", 0xFFB3B3, 0xFFE29A, 0xB8F2C8, 0xA9D8FF, 0xD6B3FF);
@@ -70,6 +71,11 @@ public final class FoundationRarity {
     public String translationKey() {
         int colon = id.indexOf(':');
         return colon < 0 ? "rarity.foundation." + id : "rarity." + id.substring(0, colon) + "." + id.substring(colon + 1);
+    }
+
+    public ResourceLocation tooltipSprite() {
+        int colon = id.indexOf(':');
+        return colon < 0 ? ResourceLocation.fromNamespaceAndPath("foundation", "tooltip/" + id) : ResourceLocation.fromNamespaceAndPath(id.substring(0, colon), "tooltip/" + id.substring(colon + 1));
     }
 
     /** First color, used when only one color fits, e.g. for borders or labels. */

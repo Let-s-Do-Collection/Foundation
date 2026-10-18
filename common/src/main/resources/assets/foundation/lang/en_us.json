@@ -17,5 +17,11 @@
   "rarity.foundation.legendary": "Legendary",
   "rarity.foundation.celestial": "Celestial",
   "rarity.foundation.divine": "Divine",
-  "rarity.foundation.eternal": "Eternal"
+  "rarity.foundation.eternal": "Eternal",
+  "gui.foundation.config.configure": "Configure…",
+  "gui.foundation.config.link.website": "Website",
+  "gui.foundation.config.link.github": "GitHub",
+  "gui.foundation.config.link.discord": "Discord",
+  "gui.foundation.config.link.kofi": "Support on Ko-fi",
+  "gui.foundation.config.link.patreon": "Support on Patreon"
 }

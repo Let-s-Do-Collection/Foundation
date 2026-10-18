@@ -17,12 +17,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.foundation.util.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 /** Inventory holder for {@link StorageBlock}. Syncs to tracking players on every change. */
-public class StorageBlockEntity extends BlockEntity implements Clearable {
+public class StorageBlockEntity extends BlockEntity implements Clearable, ImplementedInventory {
     private int size;
     private NonNullList<ItemStack> inventory;
     private long wobbleStart = Long.MIN_VALUE / 2;
@@ -137,5 +138,34 @@ public class StorageBlockEntity extends BlockEntity implements Clearable {
     @Override
     public void clearContent() {
         inventory.clear();
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        setStack(slot, stack);
+    }
+
+    @Override
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
+        return removeStack(slot);
+    }
+
+    @Override
+    public @NotNull ItemStack removeItem(int slot, int count) {
+        ItemStack stack = getItems().get(slot);
+        if (stack.isEmpty() || count <= 0) {
+            return ItemStack.EMPTY;
+        }
+        if (count >= stack.getCount()) {
+            return removeStack(slot);
+        }
+        ItemStack split = stack.split(count);
+        setChanged();
+        return split;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getItems() {
+        return inventory == null ? NonNullList.create() : inventory;
     }
 }

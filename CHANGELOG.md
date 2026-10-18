@@ -1,3 +1,16 @@
+[1.0.8]
+
+**Added**
+* Rarity tooltip frames: items with a Foundation rarity get a matching tooltip frame, other mods can add frames for their own rarities as `<namespace>:tooltip/<rarity>` gui sprites
+
+**Changed**
+* Common, uncommon, rare, epic and legendary name colors now match their tooltip frames
+
+**Fixed**
+* `StorageBlockEntity` and `WardrobeBlockEntity` now expose their inventory as a vanilla container, so hoppers and other mods can access it
+
+***
+
 [1.0.7]
 
 **Fixed**

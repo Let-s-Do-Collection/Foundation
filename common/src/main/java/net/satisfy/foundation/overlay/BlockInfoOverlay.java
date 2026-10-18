@@ -1,5 +1,7 @@
 package net.satisfy.foundation.overlay;
 
+import net.satisfy.foundation.tooltip.TooltipBorder;
+
 import java.util.Map;
 import java.util.HashMap;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -233,7 +235,7 @@ public final class BlockInfoOverlay {
         if (notice) {
             drawBackground(graphics, width, height, NOTICE_BACKGROUND, NOTICE_BORDER_TOP, NOTICE_BORDER_BOTTOM);
         } else {
-            drawBackground(graphics, width, height, TOOLTIP_BACKGROUND, TOOLTIP_BORDER_TOP, TOOLTIP_BORDER_BOTTOM);
+            drawBackground(graphics, width, height, TOOLTIP_BACKGROUND, TooltipBorder.top(TOOLTIP_BORDER_TOP), TooltipBorder.bottom(TOOLTIP_BORDER_BOTTOM));
         }
         graphics.flush();
         RenderSystem.enableDepthTest();
