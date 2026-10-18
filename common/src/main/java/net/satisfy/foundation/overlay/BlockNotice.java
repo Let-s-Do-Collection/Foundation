@@ -13,6 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.satisfy.foundation.Foundation;
+import net.satisfy.foundation.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 public final class BlockNotice {
@@ -35,7 +36,11 @@ public final class BlockNotice {
 
     public static void init() {
         if (Platform.getEnvironment() == Env.CLIENT) {
-            NetworkManager.registerReceiver(NetworkManager.s2c(), Packet.TYPE, Packet.CODEC, (packet, context) -> context.queue(() -> BlockInfoOverlay.showNotice(packet.pos(), packet.message(), packet.lines())));
+            NetworkManager.registerReceiver(NetworkManager.s2c(), Packet.TYPE, Packet.CODEC, (packet, context) -> context.queue(() -> {
+                if (PlatformHelper.showBlockNotices()) {
+                    BlockInfoOverlay.showNotice(packet.pos(), packet.message(), packet.lines());
+                }
+            }));
         } else {
             NetworkManager.registerS2CPayloadType(Packet.TYPE, Packet.CODEC);
         }

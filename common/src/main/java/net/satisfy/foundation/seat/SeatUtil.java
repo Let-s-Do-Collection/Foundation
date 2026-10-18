@@ -55,6 +55,7 @@ public final class SeatUtil {
         if (!isOccupied(world, hitPos) && player.getItemInHand(hand).isEmpty()) {
             ChairEntity chair = FoundationEntities.CHAIR.get().create(world);
             assert chair != null;
+            chair.setSeatPos(hitPos);
             chair.moveTo(hitPos.getX() + 0.5D, hitPos.getY() + 0.25D + extraHeight, hitPos.getZ() + 0.5D, 0, 0);
             if (addChairEntity(world, hitPos, chair, player.blockPosition())) {
                 world.addFreshEntity(chair);

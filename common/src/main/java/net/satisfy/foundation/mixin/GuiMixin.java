@@ -3,6 +3,7 @@ package net.satisfy.foundation.mixin;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.satisfy.foundation.platform.PlatformHelper;
 import net.satisfy.foundation.rarity.FoundationRarities;
 import net.satisfy.foundation.rarity.FoundationRarity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +17,6 @@ public abstract class GuiMixin {
     private Component foundation$rarityName(ItemStack stack) {
         FoundationRarity rarity = FoundationRarities.get(stack);
         Component name = stack.getHoverName();
-        return rarity == null ? name : rarity.apply(name);
+        return rarity == null || !PlatformHelper.enableRarityColors() ? name : rarity.apply(name);
     }
 }

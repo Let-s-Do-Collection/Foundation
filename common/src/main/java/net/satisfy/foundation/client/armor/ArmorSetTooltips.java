@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.satisfy.foundation.armor.ArmorSet;
 import net.satisfy.foundation.armor.ArmorSets;
 import net.satisfy.foundation.armor.Wearing;
+import net.satisfy.foundation.platform.PlatformHelper;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public final class ArmorSetTooltips {
         }
         initialized = true;
         ClientTooltipEvent.ITEM.register((stack, tooltip, context, flag) -> ArmorSets.find(stack.getItem())
+                .filter(set -> PlatformHelper.showArmorSetInfo())
                 .filter(ArmorSet::isTooltipVisible)
                 .ifPresent(set -> append(set, tooltip)));
     }

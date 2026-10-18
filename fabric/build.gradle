@@ -27,6 +27,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude group: "net.fabricmc.fabric-api" }
+    modCompileOnly "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -84,6 +86,7 @@ modrinth {
     dependencies {
         required.project "fabric-api"
         required.project "architectury-api"
+        required.project "cloth-config"
     }
 }
 
@@ -101,4 +104,5 @@ tasks.register("curseforge", net.darkhax.curseforgegradle.TaskPublishCurseForge)
     mainFile.addEnvironment("Client", "Server")
         mainFile.addRequirement("fabric-api")
         mainFile.addRequirement("architectury-api")
+        mainFile.addRequirement("cloth-config")
 }

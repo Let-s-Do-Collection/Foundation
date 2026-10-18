@@ -2,12 +2,18 @@
 
 **Added**
 * Rarity tooltip frames: items with a Foundation rarity get a matching tooltip frame, other mods can add frames for their own rarities as `<namespace>:tooltip/<rarity>` gui sprites
+* Items with a rarity frame show their icon left of the name in a taller title bar
+* Rarity tooltips use compact gaps instead of empty lines and drop the duplicated mod name line
+* Foundation config (Cloth Config on Fabric, NeoForge config screen) with switches for the improved item tooltips, rarity name colors, item info, armor set info and block notices
 
 **Changed**
 * Common, uncommon, rare, epic and legendary name colors now match their tooltip frames
+* Celestial, divine and eternal are now called Relic, Artifact and Endless
+* `InfoTooltip` lines wrap at 200 pixels and skip the empty line right below the item name
 
 **Fixed**
 * `StorageBlockEntity` and `WardrobeBlockEntity` now expose their inventory as a vanilla container, so hoppers and other mods can access it
+* Seats: the player now sits at the correct height and faces the direction of the block
 
 ***
 

@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.satisfy.foundation.platform.PlatformHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -38,8 +39,8 @@ public final class FoundationRarities {
         initialized = true;
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             FoundationRarity rarity = get(stack);
-            RarityTooltipFrame.mark(rarity);
-            if (rarity != null && !lines.isEmpty()) {
+            RarityTooltipFrame.mark(rarity, stack);
+            if (rarity != null && !lines.isEmpty() && PlatformHelper.enableRarityColors()) {
                 Component name = lines.getFirst();
                 lines.set(0, rarity.apply(name));
             }

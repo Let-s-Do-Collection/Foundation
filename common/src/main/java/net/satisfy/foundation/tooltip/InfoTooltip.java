@@ -2,14 +2,17 @@ package net.satisfy.foundation.tooltip;
 
 import dev.architectury.event.events.client.ClientTooltipEvent;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
+import net.satisfy.foundation.platform.PlatformHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +31,7 @@ import java.util.function.BooleanSupplier;
 public final class InfoTooltip {
     private static final int TEXT_COLOR = 0xFFD966;
     private static final int KEY_COLOR = 0xFFD700;
+    private static final int MAX_WIDTH = 200;
     private static final Map<Item, Entry> ENTRIES = new HashMap<>();
     private static boolean initialized;
 
@@ -41,7 +45,7 @@ public final class InfoTooltip {
         initialized = true;
         ClientTooltipEvent.ITEM.register((stack, lines, context, flag) -> {
             Entry entry = ENTRIES.get(stack.getItem());
-            if (entry != null && entry.enabled.getAsBoolean()) {
+            if (entry != null && PlatformHelper.showItemInfo() && entry.enabled.getAsBoolean()) {
                 entry.append(lines);
             }
         });
@@ -98,13 +102,16 @@ public final class InfoTooltip {
             if (this.placeable) {
                 tooltip.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.GRAY));
             }
+            Style gray = Style.EMPTY.withColor(ChatFormatting.GRAY);
             for (String line : this.lines) {
-                tooltip.add(Component.translatable(line).withStyle(ChatFormatting.GRAY));
+                addWrapped(tooltip, Component.translatable(line), gray);
             }
             if (this.details <= 0) {
                 return;
             }
-            tooltip.add(Component.empty());
+            if (tooltip.size() > 1) {
+                tooltip.add(Component.empty());
+            }
             Style text = Style.EMPTY.withColor(TextColor.fromRgb(TEXT_COLOR));
             if (!Screen.hasShiftDown()) {
                 Component key = Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(KEY_COLOR)));
@@ -115,7 +122,13 @@ public final class InfoTooltip {
                 if (i > 0) {
                     tooltip.add(Component.empty());
                 }
-                tooltip.add(Component.translatable(this.detailPrefix + i).withStyle(text));
+                addWrapped(tooltip, Component.translatable(this.detailPrefix + i), text);
+            }
+        }
+
+        private static void addWrapped(List<Component> tooltip, Component line, Style style) {
+            for (FormattedText part : Minecraft.getInstance().font.getSplitter().splitLines(line.getString(), MAX_WIDTH, style)) {
+                tooltip.add(Component.literal(part.getString()).withStyle(style));
             }
         }
     }
