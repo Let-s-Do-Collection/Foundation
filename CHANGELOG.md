@@ -5,6 +5,7 @@
 * Items with a rarity frame show their icon left of the name in a taller title bar
 * Rarity tooltips use compact gaps instead of empty lines and drop the duplicated mod name line
 * Foundation config (Cloth Config on Fabric, NeoForge config screen) with switches for the improved item tooltips, rarity name colors, item info, armor set info and block notices
+* Config screen with the mod logo, a Configure button, the mod version and links to Website, GitHub, Discord, Ko-fi and Patreon. Mods open it with `LetsDoConfigScreen` and ship their logo as `textures/gui/logo.png`
 
 **Changed**
 * Common, uncommon, rare, epic and legendary name colors now match their tooltip frames
