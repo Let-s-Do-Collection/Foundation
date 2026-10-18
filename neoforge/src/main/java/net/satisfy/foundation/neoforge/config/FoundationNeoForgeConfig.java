@@ -9,12 +9,14 @@ public class FoundationNeoForgeConfig {
     public static final ModConfigSpec.BooleanValue ENABLE_RARITY_COLORS;
     public static final ModConfigSpec.BooleanValue SHOW_ITEM_INFO;
     public static final ModConfigSpec.BooleanValue SHOW_ARMOR_SET_INFO;
+    public static final ModConfigSpec.BooleanValue ENABLE_ATTRIBUTE_ICONS;
     public static final ModConfigSpec.BooleanValue SHOW_BLOCK_NOTICES;
 
     public static boolean enableImprovedTooltips = true;
     public static boolean enableRarityColors = true;
     public static boolean showItemInfo = true;
     public static boolean showArmorSetInfo = true;
+    public static boolean enableAttributeIcons = true;
     public static boolean showBlockNotices = true;
 
     static {
@@ -25,6 +27,7 @@ public class FoundationNeoForgeConfig {
         ENABLE_RARITY_COLORS = builder.comment("Item names are colored by their rarity, in tooltips and above the hotbar.").define("enableRarityColors", true);
         SHOW_ITEM_INFO = builder.comment("Shows extra tooltip lines like Can be placed and the details while holding Shift.").define("showItemInfo", true);
         SHOW_ARMOR_SET_INFO = builder.comment("Shows which pieces of an armor set you are wearing and its set bonus.").define("showArmorSetInfo", true);
+        ENABLE_ATTRIBUTE_ICONS = builder.comment("Item attributes like armor and attack damage show an icon in front of their value.").define("enableAttributeIcons", true);
         SHOW_BLOCK_NOTICES = builder.comment("Shows a short confirmation next to a block after you use it.").define("showBlockNotices", true);
         builder.pop();
 
@@ -44,6 +47,7 @@ public class FoundationNeoForgeConfig {
         enableRarityColors = ENABLE_RARITY_COLORS.get();
         showItemInfo = SHOW_ITEM_INFO.get();
         showArmorSetInfo = SHOW_ARMOR_SET_INFO.get();
+        enableAttributeIcons = ENABLE_ATTRIBUTE_ICONS.get();
         showBlockNotices = SHOW_BLOCK_NOTICES.get();
     }
 }

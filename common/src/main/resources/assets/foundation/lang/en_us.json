@@ -34,6 +34,8 @@
   "text.autoconfig.foundation.option.infoTooltips.showItemInfo.@Tooltip": "Shows extra tooltip lines like Can be placed and the details while holding Shift.",
   "text.autoconfig.foundation.option.infoTooltips.showArmorSetInfo": "Armor Set Info",
   "text.autoconfig.foundation.option.infoTooltips.showArmorSetInfo.@Tooltip": "Shows which pieces of an armor set you are wearing and its set bonus.",
+  "text.autoconfig.foundation.option.infoTooltips.enableAttributeIcons": "Attribute Icons",
+  "text.autoconfig.foundation.option.infoTooltips.enableAttributeIcons.@Tooltip": "Item attributes like armor and attack damage show an icon in front of their value.",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices": "Block Notices",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices.@Tooltip": "Shows a short confirmation next to a block after you use it.",
   "foundation.configuration.title": "Foundation",
@@ -50,6 +52,8 @@
   "foundation.configuration.showItemInfo.tooltip": "Shows extra tooltip lines like Can be placed and the details while holding Shift.",
   "foundation.configuration.showArmorSetInfo": "Armor Set Info",
   "foundation.configuration.showArmorSetInfo.tooltip": "Shows which pieces of an armor set you are wearing and its set bonus.",
+  "foundation.configuration.enableAttributeIcons": "Attribute Icons",
+  "foundation.configuration.enableAttributeIcons.tooltip": "Item attributes like armor and attack damage show an icon in front of their value.",
   "foundation.configuration.showBlockNotices": "Block Notices",
   "foundation.configuration.showBlockNotices.tooltip": "Shows a short confirmation next to a block after you use it."
 }

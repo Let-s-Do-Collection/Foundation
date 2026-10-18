@@ -24,6 +24,11 @@ public class PlatformHelper {
     }
 
     @ExpectPlatform
+    public static boolean enableAttributeIcons() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static boolean showBlockNotices() {
         throw new AssertionError();
     }

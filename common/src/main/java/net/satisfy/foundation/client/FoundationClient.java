@@ -12,6 +12,7 @@ import net.satisfy.foundation.overlay.BlockInfoOverlay;
 import net.satisfy.foundation.registry.FoundationEntities;
 import net.satisfy.foundation.seat.ChairRenderer;
 import net.satisfy.foundation.rarity.FoundationRarities;
+import net.satisfy.foundation.tooltip.AttributeIcons;
 import net.satisfy.foundation.tooltip.InfoTooltip;
 
 /** Client side setup of the lib, called from the loader specific client entrypoints. */
@@ -33,6 +34,7 @@ public class FoundationClient {
         ArmorSetTooltips.init();
         FurnitureColors.init();
         InfoTooltip.init();
+        AttributeIcons.init();
         FoundationRarities.init();
     }
 }

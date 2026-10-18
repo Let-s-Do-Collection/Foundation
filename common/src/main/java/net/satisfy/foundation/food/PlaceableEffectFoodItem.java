@@ -1,5 +1,6 @@
 package net.satisfy.foundation.food;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,6 +25,8 @@ public class PlaceableEffectFoodItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         EffectTooltips.append(itemStack, tooltipContext, tooltip);
+        tooltip.add(Component.empty());
+        tooltip.add(Component.translatable("tooltip.foundation.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 
     @Override

@@ -25,6 +25,10 @@ public class PlatformHelperImpl extends PlatformHelper {
         return config().infoTooltips.showArmorSetInfo;
     }
 
+    public static boolean enableAttributeIcons() {
+        return config().infoTooltips.enableAttributeIcons;
+    }
+
     public static boolean showBlockNotices() {
         return config().infoTooltips.showBlockNotices;
     }

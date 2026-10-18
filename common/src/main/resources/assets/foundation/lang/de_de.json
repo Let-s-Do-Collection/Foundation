@@ -34,6 +34,8 @@
   "text.autoconfig.foundation.option.infoTooltips.showItemInfo.@Tooltip": "Zeigt zusätzliche Tooltip-Zeilen wie Kann platziert werden und die Details beim Halten von Shift.",
   "text.autoconfig.foundation.option.infoTooltips.showArmorSetInfo": "Rüstungsset-Info",
   "text.autoconfig.foundation.option.infoTooltips.showArmorSetInfo.@Tooltip": "Zeigt, welche Teile eines Rüstungssets du trägst, und den Set-Bonus.",
+  "text.autoconfig.foundation.option.infoTooltips.enableAttributeIcons": "Attribut-Icons",
+  "text.autoconfig.foundation.option.infoTooltips.enableAttributeIcons.@Tooltip": "Item-Attribute wie Rüstung und Angriffsschaden zeigen ein Icon vor ihrem Wert.",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices": "Block-Hinweise",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices.@Tooltip": "Zeigt nach dem Benutzen eines Blocks eine kurze Bestätigung daneben.",
   "foundation.configuration.title": "Foundation",
@@ -50,6 +52,8 @@
   "foundation.configuration.showItemInfo.tooltip": "Zeigt zusätzliche Tooltip-Zeilen wie Kann platziert werden und die Details beim Halten von Shift.",
   "foundation.configuration.showArmorSetInfo": "Rüstungsset-Info",
   "foundation.configuration.showArmorSetInfo.tooltip": "Zeigt, welche Teile eines Rüstungssets du trägst, und den Set-Bonus.",
+  "foundation.configuration.enableAttributeIcons": "Attribut-Icons",
+  "foundation.configuration.enableAttributeIcons.tooltip": "Item-Attribute wie Rüstung und Angriffsschaden zeigen ein Icon vor ihrem Wert.",
   "foundation.configuration.showBlockNotices": "Block-Hinweise",
   "foundation.configuration.showBlockNotices.tooltip": "Zeigt nach dem Benutzen eines Blocks eine kurze Bestätigung daneben."
 }

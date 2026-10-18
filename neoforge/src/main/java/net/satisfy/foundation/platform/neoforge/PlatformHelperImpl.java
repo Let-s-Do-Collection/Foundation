@@ -20,6 +20,10 @@ public class PlatformHelperImpl extends PlatformHelper {
         return FoundationNeoForgeConfig.showArmorSetInfo;
     }
 
+    public static boolean enableAttributeIcons() {
+        return FoundationNeoForgeConfig.enableAttributeIcons;
+    }
+
     public static boolean showBlockNotices() {
         return FoundationNeoForgeConfig.showBlockNotices;
     }

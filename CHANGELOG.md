@@ -1,3 +1,12 @@
+[1.0.10]
+
+**Added**
+* Attribute icons: armor, armor toughness, knockback resistance, attack damage, attack speed, max health and speed lines get an icon in front of their value, with a config switch. With Quark installed, Foundation's icons replace Quark's attribute tooltips
+
+**Fixed**
+* Placeable food and drink items not showing the "Can be placed" tooltip
+
+***
 [1.0.9]
 
 **Added**

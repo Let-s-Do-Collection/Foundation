@@ -1,0 +1,67 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/armor.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "\ue100"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/armor_toughness.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "\ue101"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/knockback_resistance.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue102"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/attack_damage.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "\ue103"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/attack_speed.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "\ue104"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/max_health.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "\ue105"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "foundation:font/attribute/movement_speed.png",
+      "ascent": 8,
+      "height": 9,
+      "chars": [
+        "\ue106"
+      ]
+    }
+  ]
+}

@@ -24,6 +24,9 @@ public class FoundationFabricConfig implements ConfigData {
         public boolean showArmorSetInfo = true;
 
         @ConfigEntry.Gui.Tooltip
+        public boolean enableAttributeIcons = true;
+
+        @ConfigEntry.Gui.Tooltip
         public boolean showBlockNotices = true;
     }
 }
