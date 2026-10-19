@@ -1,5 +1,6 @@
 package net.satisfy.foundation.mixin;
 
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -9,11 +10,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.foundation.client.creative.CreativeSideTabs;
+import net.satisfy.foundation.client.creative.CreativeTabTooltips;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -69,9 +72,16 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             graphics.renderItem(sideTabs.get(i).icon(), x + 10, y + 6);
         }
         for (int i = 0; i < sideTabs.size(); i++) {
-            if (foundation$isOverTab(i, mouseX, mouseY)) {
+            if (foundation$isOverTab(i, mouseX, mouseY) && !CreativeTabTooltips.renderSideTab(graphics, font, selectedTab, sideTabs.get(i), mouseX, mouseY)) {
                 graphics.renderTooltip(font, sideTabs.get(i).title(), mouseX, mouseY);
             }
+        }
+    }
+
+    @Redirect(method = "checkTabHovering", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderTooltip(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;II)V"))
+    private void foundation$renderTabTooltip(GuiGraphics graphics, Font font, Component title, int mouseX, int mouseY, GuiGraphics original, CreativeModeTab tab, int tabMouseX, int tabMouseY) {
+        if (!CreativeTabTooltips.renderTab(graphics, font, tab, mouseX, mouseY)) {
+            graphics.renderTooltip(font, title, mouseX, mouseY);
         }
     }
 

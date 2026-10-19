@@ -1,3 +1,9 @@
+[1.0.12]
+
+**Added**
+* Creative tab tooltips: mods register their tab with `CreativeTabTooltips.register(tab, rarity)` and get a rarity frame with the tab icon and name plus their `@modid`. Side tabs of that tab get the same frame with their icon and name
+
+***
 [1.0.11]
 
 **Added**

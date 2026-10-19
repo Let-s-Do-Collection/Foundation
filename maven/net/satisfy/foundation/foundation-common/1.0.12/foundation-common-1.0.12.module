@@ -1,0 +1,105 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "net.satisfy.foundation",
+    "module": "foundation-common",
+    "version": "1.0.12",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.13"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "dev.architectury",
+          "module": "architectury",
+          "version": {
+            "requires": "13.0.8"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "foundation-common-1.0.12.jar",
+          "url": "foundation-common-1.0.12.jar",
+          "size": 725278,
+          "sha512": "1721dbb3f4434c1e0c4fc628c14fda5653fab759b31c58cd4520f16928230618619e1005674d29a70cd7ada8d18269e9eb96a36833d4f74a34e75976d3c5d5af",
+          "sha256": "89735a6b9409879489c6f23dd93fb71c8ab6a951d0f11cadf558ff15e2542898",
+          "sha1": "975c80e67a02c1d3c8b1a9846ae357d3d2b6879e",
+          "md5": "0486889b3ad679f1f4d1f7db2541769d"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "dev.architectury",
+          "module": "architectury",
+          "version": {
+            "requires": "13.0.8"
+          }
+        },
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.17.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "foundation-common-1.0.12.jar",
+          "url": "foundation-common-1.0.12.jar",
+          "size": 725278,
+          "sha512": "1721dbb3f4434c1e0c4fc628c14fda5653fab759b31c58cd4520f16928230618619e1005674d29a70cd7ada8d18269e9eb96a36833d4f74a34e75976d3c5d5af",
+          "sha256": "89735a6b9409879489c6f23dd93fb71c8ab6a951d0f11cadf558ff15e2542898",
+          "sha1": "975c80e67a02c1d3c8b1a9846ae357d3d2b6879e",
+          "md5": "0486889b3ad679f1f4d1f7db2541769d"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "foundation-common-1.0.12-sources.jar",
+          "url": "foundation-common-1.0.12-sources.jar",
+          "size": 453699,
+          "sha512": "495d3dca504ac2c396755e5d7e9bd0af50790b21f9344b85555bc439de509beb4c99e2bb0a70c73157612ef7dc0e819ab749f6a3c4405902069a032398c264a1",
+          "sha256": "0dfe7ac5d1fccaae7f9336e03b610eaf02eaf7ceaef3d857d91a8112cde8d056",
+          "sha1": "c2ea68e8264ac93547fb9352dee635c6f4981cef",
+          "md5": "c7555046e2813e499e26792fbd5d30ac"
+        }
+      ]
+    }
+  ]
+}
