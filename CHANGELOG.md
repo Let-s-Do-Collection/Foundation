@@ -1,3 +1,10 @@
+[1.0.13]
+
+**Added**
+* Entity info panels: mods register an `EntityInfoProvider` with `BlockInfoOverlay.registerEntityProvider` and get the same panel above the entity they look at. `EntityInfoSync` pulls server data for it, like `BlockInfoSync` does for blocks
+* Screen notices: `BlockInfoOverlay.showScreenNotice(title, lines)` shows a notice panel at the top of the screen that stays while it gets refreshed and fades out afterwards, `clearScreenNotice()` hides it right away
+
+***
 [1.0.12]
 
 **Added**

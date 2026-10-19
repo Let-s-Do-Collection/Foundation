@@ -17,10 +17,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public final class BlockInfoOverlay {
     private static final int COLOR_SEPARATOR = 0x40FFFFFF;
     private static final int PANEL_GAP = 6;
     private static final int SCREEN_MARGIN = 4;
+    private static final int SCREEN_NOTICE_TOP = 16;
     private static final double ABOVE_OFFSET = 0.45;
     private static final double SIDE_OFFSET = 0.7;
     private static final float[] ABOVE_SCALES = {1.0F, 0.8F, 0.65F};
@@ -54,7 +58,8 @@ public final class BlockInfoOverlay {
     private static final int TOOLTIP_BORDER_BOTTOM = 0x5028007F;
 
     private static final List<BlockInfoProvider> PROVIDERS = new ArrayList<>();
-    private static final Map<BlockPos, PanelState> PANEL_STATES = new HashMap<>();
+    private static final List<EntityInfoProvider> ENTITY_PROVIDERS = new ArrayList<>();
+    private static final Map<Object, PanelState> PANEL_STATES = new HashMap<>();
     private static final float STICKY_MARGIN = 24.0F;
     private static final float SMOOTHING_MILLIS = 60.0F;
     private static final long STATE_TIMEOUT = 500L;
@@ -68,6 +73,9 @@ public final class BlockInfoOverlay {
     private static Component noticeMessage;
     private static List<Component> noticeLines = List.of();
     private static long noticeStart;
+    private static Component screenNoticeTitle;
+    private static List<Component> screenNoticeLines = List.of();
+    private static long screenNoticeSeen;
 
     private BlockInfoOverlay() {
     }
@@ -86,6 +94,10 @@ public final class BlockInfoOverlay {
     }
 
     /** Shows a short golden notice at a block for ~2 seconds, fades out at the end. */
+    public static void registerEntityProvider(EntityInfoProvider provider) {
+        ENTITY_PROVIDERS.add(provider);
+    }
+
     public static void showNotice(BlockPos pos, Component message) {
         showNotice(pos, message, List.of());
     }
@@ -98,6 +110,17 @@ public final class BlockInfoOverlay {
     }
 
     /** Positions returned here always get a panel, even when not looked at. */
+    public static void showScreenNotice(Component title, List<Component> lines) {
+        screenNoticeTitle = title;
+        screenNoticeLines = List.copyOf(lines);
+        screenNoticeSeen = System.currentTimeMillis();
+    }
+
+    public static void clearScreenNotice() {
+        screenNoticeTitle = null;
+        screenNoticeLines = List.of();
+    }
+
     public static void registerTracker(Supplier<Collection<BlockPos>> tracker) {
         TRACKERS.add(tracker);
     }
@@ -112,6 +135,7 @@ public final class BlockInfoOverlay {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        drawScreenNotice(graphics, minecraft);
         BlockPos notice = drawNotice(graphics, minecraft);
         BlockPos targeted = null;
         if (minecraft.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK) {
@@ -119,6 +143,8 @@ public final class BlockInfoOverlay {
             if (!targeted.equals(notice)) {
                 drawFirst(graphics, minecraft, level, targeted, hit);
             }
+        } else if (minecraft.hitResult instanceof EntityHitResult hit && hit.getType() == HitResult.Type.ENTITY) {
+            drawEntity(graphics, minecraft, level, hit.getEntity(), hit);
         }
         for (Supplier<Collection<BlockPos>> tracker : TRACKERS) {
             for (BlockPos pos : tracker.get()) {
@@ -148,6 +174,58 @@ public final class BlockInfoOverlay {
         return noticePos;
     }
 
+    private static void drawScreenNotice(GuiGraphics graphics, Minecraft minecraft) {
+        if (screenNoticeTitle == null) {
+            return;
+        }
+        long elapsed = System.currentTimeMillis() - screenNoticeSeen;
+        if (elapsed >= NOTICE_DURATION) {
+            clearScreenNotice();
+            return;
+        }
+        List<InfoSection> sections = List.of(screenNoticeLines.isEmpty() ? InfoSection.title(screenNoticeTitle) : InfoSection.lines(screenNoticeTitle, screenNoticeLines));
+        Font font = minecraft.font;
+        int width = panelWidth(font, sections);
+        int height = panelHeight(sections);
+        float alpha = Mth.clamp((NOTICE_DURATION - elapsed) / (float) NOTICE_FADE, 0.0F, 1.0F);
+        graphics.flush();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+        graphics.pose().pushPose();
+        graphics.pose().translate((graphics.guiWidth() - width) / 2.0F, SCREEN_NOTICE_TOP, 400.0F);
+        drawBackground(graphics, width, height, NOTICE_BACKGROUND, NOTICE_BORDER_TOP, NOTICE_BORDER_BOTTOM);
+        graphics.flush();
+        drawSections(graphics, font, sections, width);
+        graphics.pose().popPose();
+        graphics.flush();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    private static int panelWidth(Font font, List<InfoSection> sections) {
+        return Math.max(MIN_WIDTH, sections.stream().mapToInt(section -> section.width(font)).max().orElse(0));
+    }
+
+    private static int panelHeight(List<InfoSection> sections) {
+        int height = 0;
+        for (int i = 0; i < sections.size(); i++) {
+            height += sections.get(i).height() + (i > 0 ? SEPARATOR_HEIGHT : 0);
+        }
+        return height;
+    }
+
+    private static void drawSections(GuiGraphics graphics, Font font, List<InfoSection> sections, int width) {
+        int cursor = 0;
+        for (int i = 0; i < sections.size(); i++) {
+            if (i > 0) {
+                graphics.fill(4, cursor + SEPARATOR_HEIGHT / 2, width - 4, cursor + SEPARATOR_HEIGHT / 2 + 1, COLOR_SEPARATOR);
+                cursor += SEPARATOR_HEIGHT;
+            }
+            sections.get(i).draw(graphics, font, cursor, width);
+            cursor += sections.get(i).height();
+        }
+    }
+
     private static void drawFirst(GuiGraphics graphics, Minecraft minecraft, Level level, BlockPos pos, BlockHitResult hit) {
         BlockState state = level.getBlockState(pos);
         for (BlockInfoProvider provider : PROVIDERS) {
@@ -159,22 +237,39 @@ public final class BlockInfoOverlay {
         }
     }
 
+    private static void drawEntity(GuiGraphics graphics, Minecraft minecraft, Level level, Entity entity, EntityHitResult hit) {
+        for (EntityInfoProvider provider : ENTITY_PROVIDERS) {
+            List<InfoSection> sections = provider.describe(level, entity, hit);
+            if (!sections.isEmpty()) {
+                float partialTick = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+                Vec3 base = entity.getPosition(partialTick);
+                double top = entity.getBbHeight();
+                drawPanel(graphics, minecraft, entity.getUUID(), base.add(0.0, top + ABOVE_OFFSET, 0.0), base.add(0.0, top / 2.0, 0.0),
+                        () -> provider.beforeBackground(level, entity), sections, true, false);
+                return;
+            }
+        }
+    }
+
     private static void drawPanel(GuiGraphics graphics, Minecraft minecraft, BlockPos pos, BlockState state, BlockInfoProvider provider, List<InfoSection> sections, boolean clamp, boolean notice) {
         VoxelShape shape = state.getShape(minecraft.level, pos);
         double top = shape.isEmpty() ? 1.0 : shape.max(Direction.Axis.Y);
-        Vec3 center = Vec3.atBottomCenterOf(pos).add(0.0, top / 2.0, 0.0);
-        Optional<float[]> above = project(minecraft, graphics, Vec3.atBottomCenterOf(pos).add(0.0, top + ABOVE_OFFSET, 0.0));
+        Vec3 base = Vec3.atBottomCenterOf(pos);
+        BlockPos key = pos.immutable();
+        drawPanel(graphics, minecraft, key, base.add(0.0, top + ABOVE_OFFSET, 0.0), base.add(0.0, top / 2.0, 0.0),
+                provider == null ? null : () -> provider.beforeBackground(minecraft.level, key, state), sections, clamp, notice);
+    }
+
+    private static void drawPanel(GuiGraphics graphics, Minecraft minecraft, Object key, Vec3 abovePoint, Vec3 center, @Nullable Runnable beforeBackground, List<InfoSection> sections, boolean clamp, boolean notice) {
+        Optional<float[]> above = project(minecraft, graphics, abovePoint);
         Optional<float[]> middle = project(minecraft, graphics, center);
         if (above.isEmpty() || middle.isEmpty()) {
             return;
         }
         Font font = minecraft.font;
-        int width = Math.max(MIN_WIDTH, sections.stream().mapToInt(section -> section.width(font)).max().orElse(0));
-        int height = 0;
-        for (int i = 0; i < sections.size(); i++) {
-            height += sections.get(i).height() + (i > 0 ? SEPARATOR_HEIGHT : 0);
-        }
-        PanelState previous = PANEL_STATES.get(pos);
+        int width = panelWidth(font, sections);
+        int height = panelHeight(sections);
+        PanelState previous = PANEL_STATES.get(key);
         long now = System.currentTimeMillis();
         boolean fresh = previous == null || now - previous.lastSeen > STATE_TIMEOUT;
         float scale = SIDE_SCALE;
@@ -212,7 +307,7 @@ public final class BlockInfoOverlay {
             y = Mth.lerp(blend, previous.y, y);
             scale = Mth.lerp(blend, previous.scale, scale);
         }
-        PANEL_STATES.put(pos.immutable(), new PanelState(x, y, scale, targetScale, placedAbove, now));
+        PANEL_STATES.put(key, new PanelState(x, y, scale, targetScale, placedAbove, now));
         if (PANEL_STATES.size() > MAX_PANEL_STATES) {
             PANEL_STATES.entrySet().removeIf(entry -> now - entry.getValue().lastSeen > STATE_TIMEOUT);
         }
@@ -228,8 +323,8 @@ public final class BlockInfoOverlay {
         graphics.pose().pushPose();
         graphics.pose().translate(x, y, 400.0F);
         graphics.pose().scale(scale, scale, 1.0F);
-        if (provider != null) {
-            provider.beforeBackground(minecraft.level, pos, state);
+        if (beforeBackground != null) {
+            beforeBackground.run();
         }
         RenderSystem.disableDepthTest();
         if (notice) {
@@ -239,15 +334,7 @@ public final class BlockInfoOverlay {
         }
         graphics.flush();
         RenderSystem.enableDepthTest();
-        int cursor = 0;
-        for (int i = 0; i < sections.size(); i++) {
-            if (i > 0) {
-                graphics.fill(4, cursor + SEPARATOR_HEIGHT / 2, width - 4, cursor + SEPARATOR_HEIGHT / 2 + 1, COLOR_SEPARATOR);
-                cursor += SEPARATOR_HEIGHT;
-            }
-            sections.get(i).draw(graphics, font, cursor, width);
-            cursor += sections.get(i).height();
-        }
+        drawSections(graphics, font, sections, width);
         graphics.pose().popPose();
         graphics.flush();
     }

@@ -3,6 +3,7 @@ package net.satisfy.foundation;
 import net.satisfy.foundation.overlay.BlockNotice;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.foundation.overlay.BlockInfoSync;
+import net.satisfy.foundation.overlay.EntityInfoSync;
 import net.satisfy.foundation.registry.FoundationBlockEntities;
 import net.satisfy.foundation.registry.FoundationEntities;
 import net.satisfy.foundation.registry.FoundationParticles;
@@ -26,6 +27,7 @@ public class Foundation {
         FoundationEntities.init();
         FoundationBlockEntities.init();
         BlockInfoSync.init();
+        EntityInfoSync.init();
         BlockNotice.init();
         SetTextPacket.init();
         RecipeUnlockSync.init();
