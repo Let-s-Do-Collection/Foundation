@@ -117,7 +117,7 @@ public class SliceableCakeBlock extends Block {
         if (!level.isClientSide) {
             FoodProperties food = new ItemStack(slice.get()).get(DataComponents.FOOD);
             if (food != null) {
-                player.getFoodData().eat(food.nutrition(), food.saturation());
+                player.getFoodData().eat(food);
                 food.effects().forEach(effect -> player.addEffect(new MobEffectInstance(effect.effect())));
             }
             removePiece(level, pos, state);

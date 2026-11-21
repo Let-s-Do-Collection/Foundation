@@ -38,6 +38,8 @@
   "text.autoconfig.foundation.option.infoTooltips.enableAttributeIcons.@Tooltip": "Item attributes like armor and attack damage show an icon in front of their value.",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices": "Block Notices",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices.@Tooltip": "Shows a short confirmation next to a block after you use it.",
+  "text.autoconfig.foundation.option.infoTooltips.showTutorials": "Tutorials",
+  "text.autoconfig.foundation.option.infoTooltips.showTutorials.@Tooltip": "Shows short step-by-step tips at the top of the screen. Each tip appears only once.",
   "foundation.configuration.title": "Foundation",
   "foundation.configuration.section.foundation.common.toml": "Common",
   "foundation.configuration.section.foundation.common.toml.title": "Foundation",
@@ -55,5 +57,8 @@
   "foundation.configuration.enableAttributeIcons": "Attribute Icons",
   "foundation.configuration.enableAttributeIcons.tooltip": "Item attributes like armor and attack damage show an icon in front of their value.",
   "foundation.configuration.showBlockNotices": "Block Notices",
-  "foundation.configuration.showBlockNotices.tooltip": "Shows a short confirmation next to a block after you use it."
+  "foundation.configuration.showBlockNotices.tooltip": "Shows a short confirmation next to a block after you use it.",
+  "foundation.configuration.showTutorials": "Tutorials",
+  "foundation.configuration.showTutorials.tooltip": "Shows short step-by-step tips at the top of the screen. Each tip appears only once.",
+  "hud.foundation.tutorial.reset": "Tutorials Reset"
 }

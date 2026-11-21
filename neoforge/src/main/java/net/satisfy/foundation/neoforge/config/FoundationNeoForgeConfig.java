@@ -11,6 +11,7 @@ public class FoundationNeoForgeConfig {
     public static final ModConfigSpec.BooleanValue SHOW_ARMOR_SET_INFO;
     public static final ModConfigSpec.BooleanValue ENABLE_ATTRIBUTE_ICONS;
     public static final ModConfigSpec.BooleanValue SHOW_BLOCK_NOTICES;
+    public static final ModConfigSpec.BooleanValue SHOW_TUTORIALS;
 
     public static boolean enableImprovedTooltips = true;
     public static boolean enableRarityColors = true;
@@ -18,6 +19,7 @@ public class FoundationNeoForgeConfig {
     public static boolean showArmorSetInfo = true;
     public static boolean enableAttributeIcons = true;
     public static boolean showBlockNotices = true;
+    public static boolean showTutorials = true;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -29,6 +31,7 @@ public class FoundationNeoForgeConfig {
         SHOW_ARMOR_SET_INFO = builder.comment("Shows which pieces of an armor set you are wearing and its set bonus.").define("showArmorSetInfo", true);
         ENABLE_ATTRIBUTE_ICONS = builder.comment("Item attributes like armor and attack damage show an icon in front of their value.").define("enableAttributeIcons", true);
         SHOW_BLOCK_NOTICES = builder.comment("Shows a short confirmation next to a block after you use it.").define("showBlockNotices", true);
+        SHOW_TUTORIALS = builder.comment("Shows short step-by-step tips at the top of the screen. Each tip appears only once.").define("showTutorials", true);
         builder.pop();
 
         COMMON_CONFIG = builder.build();
@@ -49,5 +52,6 @@ public class FoundationNeoForgeConfig {
         showArmorSetInfo = SHOW_ARMOR_SET_INFO.get();
         enableAttributeIcons = ENABLE_ATTRIBUTE_ICONS.get();
         showBlockNotices = SHOW_BLOCK_NOTICES.get();
+        showTutorials = SHOW_TUTORIALS.get();
     }
 }

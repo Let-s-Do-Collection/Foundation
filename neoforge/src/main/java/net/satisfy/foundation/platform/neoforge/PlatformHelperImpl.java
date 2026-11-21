@@ -27,4 +27,8 @@ public class PlatformHelperImpl extends PlatformHelper {
     public static boolean showBlockNotices() {
         return FoundationNeoForgeConfig.showBlockNotices;
     }
+
+    public static boolean showTutorials() {
+        return FoundationNeoForgeConfig.showTutorials;
+    }
 }

@@ -10,6 +10,7 @@ shelves, food with effects, particles, banners and a handful of helpers.
 | Area | Package | What it gives you | Guide |
 |---|---|---|---|
 | HUD panels | `overlay` | "Look at a block, see what to do" panels | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/HUD-Panels) |
+| Tutorials | `overlay` | Step-by-step tips with a progress bar, from code or JSON in a resource pack | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Tutorials) |
 | Creative tabs | `client.creative` | Categories as side tabs on the left of your creative tab | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Creative-Tabs) |
 | Armor | `armor`, `client.armor` | Textured and dyeable armor items, custom 3D armor models, armor sets with set tooltips | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Armor) |
 | Model templates | `assets/foundation/models` | Shared parent models for cabinets, drawers, tables and wall decorations | [Guide](https://github.com/Let-s-Do-Collection/Foundation/wiki/Model-Templates) |

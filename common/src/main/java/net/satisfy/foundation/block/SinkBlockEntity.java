@@ -1,6 +1,7 @@
 package net.satisfy.foundation.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -23,6 +24,10 @@ public class SinkBlockEntity extends BlockEntity {
     private boolean open;
     private long toggleTime = -100;
     private int fillTicks;
+    private float displayLevel;
+    private float prevDisplayLevel;
+    private float slosh;
+    private float prevSlosh;
 
     public SinkBlockEntity(BlockPos pos, BlockState state) {
         super(FoundationBlockEntities.SINK.get(), pos, state);
@@ -43,6 +48,27 @@ public class SinkBlockEntity extends BlockEntity {
             level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.25F, 1.4F);
             sink.sync();
         }
+    }
+
+    public static void clientTick(SinkBlockEntity sink) {
+        sink.prevDisplayLevel = sink.displayLevel;
+        boolean filling = sink.open && sink.waterLevel < MAX_LEVEL;
+        if (filling) {
+            float rising = Math.min(sink.displayLevel + 1.0F / FILL_TICKS, sink.waterLevel + 1.0F);
+            sink.displayLevel = Math.max(rising, sink.waterLevel);
+        } else {
+            sink.displayLevel = Mth.approach(sink.displayLevel, sink.waterLevel, 0.15F);
+        }
+        sink.prevSlosh = sink.slosh;
+        sink.slosh = filling ? Mth.approach(sink.slosh, 1.0F, 0.08F) : sink.slosh * 0.95F;
+    }
+
+    public float getDisplayLevel(float partial) {
+        return Mth.lerp(partial, prevDisplayLevel, displayLevel);
+    }
+
+    public float getSlosh(float partial) {
+        return Mth.lerp(partial, prevSlosh, slosh);
     }
 
     public void toggle() {

@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -75,6 +76,20 @@ public class ChairEntity extends Entity {
     @Override
     protected void positionRider(Entity passenger, MoveFunction move) {
         move.accept(passenger, getX(), getY(), getZ());
+        clampRotation(passenger);
+    }
+
+    private void clampRotation(Entity passenger) {
+        float seatYaw = getYRot();
+        passenger.setYBodyRot(seatYaw);
+        if (passenger instanceof LivingEntity living) {
+            living.yBodyRotO = seatYaw;
+        }
+        float relative = Mth.wrapDegrees(passenger.getYRot() - seatYaw);
+        float clamped = Mth.clamp(relative, -105.0F, 105.0F);
+        passenger.yRotO += clamped - relative;
+        passenger.setYRot(passenger.getYRot() + clamped - relative);
+        passenger.setYHeadRot(passenger.getYRot());
     }
 
     @Override
@@ -115,11 +130,7 @@ public class ChairEntity extends Entity {
 
     @Override
     public void onPassengerTurned(Entity passenger) {
-        if (passenger instanceof LivingEntity l) {
-            float yaw = getYRot();
-            l.setYBodyRot(yaw);
-            l.yBodyRotO = yaw;
-        }
+        clampRotation(passenger);
     }
 
     @Override
@@ -137,9 +148,7 @@ public class ChairEntity extends Entity {
         for (Entity e : getPassengers()) {
             if (e instanceof Player p) {
                 if (!level().isClientSide) p.setDeltaMovement(Vec3.ZERO);
-                float yaw = getYRot();
-                p.setYBodyRot(yaw);
-                p.yBodyRotO = yaw;
+                clampRotation(p);
             }
         }
     }

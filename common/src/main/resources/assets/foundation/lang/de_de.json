@@ -38,6 +38,8 @@
   "text.autoconfig.foundation.option.infoTooltips.enableAttributeIcons.@Tooltip": "Item-Attribute wie Rüstung und Angriffsschaden zeigen ein Icon vor ihrem Wert.",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices": "Block-Hinweise",
   "text.autoconfig.foundation.option.infoTooltips.showBlockNotices.@Tooltip": "Zeigt nach dem Benutzen eines Blocks eine kurze Bestätigung daneben.",
+  "text.autoconfig.foundation.option.infoTooltips.showTutorials": "Tutorials",
+  "text.autoconfig.foundation.option.infoTooltips.showTutorials.@Tooltip": "Zeigt kurze Schritt-für-Schritt-Tipps oben am Bildschirm. Jeder Tipp erscheint nur einmal.",
   "foundation.configuration.title": "Foundation",
   "foundation.configuration.section.foundation.common.toml": "Allgemein",
   "foundation.configuration.section.foundation.common.toml.title": "Foundation",
@@ -55,5 +57,8 @@
   "foundation.configuration.enableAttributeIcons": "Attribut-Icons",
   "foundation.configuration.enableAttributeIcons.tooltip": "Item-Attribute wie Rüstung und Angriffsschaden zeigen ein Icon vor ihrem Wert.",
   "foundation.configuration.showBlockNotices": "Block-Hinweise",
-  "foundation.configuration.showBlockNotices.tooltip": "Zeigt nach dem Benutzen eines Blocks eine kurze Bestätigung daneben."
+  "foundation.configuration.showBlockNotices.tooltip": "Zeigt nach dem Benutzen eines Blocks eine kurze Bestätigung daneben.",
+  "foundation.configuration.showTutorials": "Tutorials",
+  "foundation.configuration.showTutorials.tooltip": "Zeigt kurze Schritt-für-Schritt-Tipps oben am Bildschirm. Jeder Tipp erscheint nur einmal.",
+  "hud.foundation.tutorial.reset": "Tutorials zurückgesetzt"
 }

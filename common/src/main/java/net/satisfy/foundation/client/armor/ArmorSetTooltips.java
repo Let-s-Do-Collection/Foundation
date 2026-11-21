@@ -4,6 +4,8 @@ import dev.architectury.event.events.client.ClientTooltipEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,6 +17,7 @@ import net.satisfy.foundation.platform.PlatformHelper;
 import java.util.List;
 
 public final class ArmorSetTooltips {
+    private static final int BONUS_WIDTH = 200;
     private static boolean initialized;
 
     private ArmorSetTooltips() {
@@ -45,7 +48,10 @@ public final class ArmorSetTooltips {
             boolean active = player != null && set.isBonusActive(player);
             tooltip.add(Component.empty());
             tooltip.add(Component.translatable("tooltip.foundation.set_bonus").withStyle(ChatFormatting.GRAY));
-            tooltip.add(Component.translatable(set.bonusKey()).withStyle(active ? ChatFormatting.DARK_GREEN : ChatFormatting.GRAY));
+            ChatFormatting color = active ? ChatFormatting.DARK_GREEN : ChatFormatting.GRAY;
+            for (FormattedText line : Minecraft.getInstance().font.getSplitter().splitLines(Component.translatable(set.bonusKey()), BONUS_WIDTH, Style.EMPTY)) {
+                tooltip.add(Component.literal(line.getString()).withStyle(color));
+            }
         }
     }
 

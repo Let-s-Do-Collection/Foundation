@@ -28,5 +28,8 @@ public class FoundationFabricConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public boolean showBlockNotices = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showTutorials = true;
     }
 }

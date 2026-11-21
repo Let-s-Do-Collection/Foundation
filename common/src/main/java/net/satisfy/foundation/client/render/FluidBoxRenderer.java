@@ -22,6 +22,10 @@ public final class FluidBoxRenderer {
     private FluidBoxRenderer() {
     }
 
+    public static VertexConsumer buffer(MultiBufferSource buffers) {
+        return buffers.getBuffer(FLUID);
+    }
+
     public static void renderWaterBox(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax, MultiBufferSource buffer, PoseStack poseStack, int light, boolean renderBottom, @Nullable Level level, BlockPos pos) {
         int waterColor = level != null ? level.getBiome(pos).value().getWaterColor() : DEFAULT_WATER_COLOR;
         renderBox(xMin, yMin, zMin, xMax, yMax, zMax, buffer, poseStack, light, renderBottom, (224 << 24) | waterColor);

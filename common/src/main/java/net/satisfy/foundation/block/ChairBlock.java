@@ -103,8 +103,15 @@ public class ChairBlock extends Block {
         return pos.getY() < world.getMaxBuildHeight() - 1 && world.getBlockState(pos.above()).canBeReplaced(context) ? this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(HALF, DoubleBlockHalf.LOWER) : null;
     }
 
+    private final double seatHeight;
+
     public ChairBlock(Properties settings) {
+        this(settings, 0.2);
+    }
+
+    public ChairBlock(Properties settings, double seatHeight) {
         super(settings);
+        this.seatHeight = seatHeight;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
@@ -114,7 +121,7 @@ public class ChairBlock extends Block {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (blockState.getValue(HALF) == DoubleBlockHalf.LOWER) {
-            return SeatUtil.onUse(level, player, interactionHand, blockHitResult, 0.2);
+            return SeatUtil.onUse(level, player, interactionHand, blockHitResult, seatHeight);
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
@@ -149,8 +156,12 @@ public class ChairBlock extends Block {
         builder.add(FACING, HALF);
     }
 
+    protected VoxelShape getChairShape(DoubleBlockHalf half, Direction facing) {
+        return half == DoubleBlockHalf.UPPER ? SHAPE_UPPER_MAP.get(facing) : SHAPE_LOWER_MAP.get(facing);
+    }
+
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? SHAPE_UPPER_MAP.get(state.getValue(FACING)) : SHAPE_LOWER_MAP.get(state.getValue(FACING));
+        return getChairShape(state.getValue(HALF), state.getValue(FACING));
     }
 }

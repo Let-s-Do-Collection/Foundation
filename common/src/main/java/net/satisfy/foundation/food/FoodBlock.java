@@ -104,7 +104,7 @@ public class FoodBlock extends FacingBlock implements EntityBlock {
         FoodProperties fp = stack.get(DataComponents.FOOD);
         if (fp == null) fp = this.foodComponent;
 
-        player.getFoodData().eat(fp.nutrition(), fp.saturation());
+        player.getFoodData().eat(fp);
 
         if (world instanceof Level level) {
             for (FoodProperties.PossibleEffect effect : fp.effects()) {

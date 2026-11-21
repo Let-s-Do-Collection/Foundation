@@ -96,7 +96,7 @@ modrinth {
 
 tasks.register("curseforge", net.darkhax.curseforgegradle.TaskPublishCurseForge) {
     group = "publishing"
-    apiToken = System.getenv("CURSEFORGE_TOKEN")
+    apiToken = System.getenv("CURSEFORGE_API_KEY")
     def mainFile = upload(1733606, remapJar)
     mainFile.displayName = "Foundation ${rootProject.mod_version} NeoForge"
     mainFile.releaseType = "release"

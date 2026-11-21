@@ -14,7 +14,7 @@ import java.util.List;
  * item rows, an icon grid or an image. Use the static factories, then the
  * {@code with...} methods to add stuff.
  */
-public record InfoSection(Component title, List<Component> lines, List<ItemStack> icons, int columns, List<Row> rows, @Nullable ResourceLocation image, int imageSize, @Nullable ResourceLocation placeholder, boolean decorations) {
+public record InfoSection(Component title, List<Component> lines, List<ItemStack> icons, int columns, List<Row> rows, @Nullable ResourceLocation image, int imageSize, @Nullable ResourceLocation placeholder, boolean decorations, int progress, int progressMax) {
     public static final int ROW_COLUMNS = 6;
     public static final int GRID_COLUMNS = 3;
     private static final int ICON_SIZE = 16;
@@ -26,6 +26,13 @@ public record InfoSection(Component title, List<Component> lines, List<ItemStack
     private static final int COLOR_TITLE = 0xFFE8C97A;
     private static final int COLOR_TEXT = 0xFFFFFFFF;
     private static final int COLOR_SLOT = 0x28000000;
+    private static final int BAR_HEIGHT = 8;
+    private static final int BAR_MIN_WIDTH = 60;
+    private static final int COLOR_BAR_BACKGROUND = 0x60000000;
+    private static final int COLOR_BAR_BORDER = 0x40FFFFFF;
+    private static final int COLOR_BAR_RUNNING = 0xFFFFFF55;
+    private static final int COLOR_BAR_DONE = 0xFF55FF55;
+    private static final int COLOR_BAR_TEXT = 0xFFAAAAAA;
 
     /** Icon (item or sprite) with some text next to it. */
     public record Row(ItemStack icon, Component text, @Nullable ResourceLocation sprite) {
@@ -40,41 +47,49 @@ public record InfoSection(Component title, List<Component> lines, List<ItemStack
 
     /** Just a title, nothing else. */
     public static InfoSection title(Component title) {
-        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, List.of(), null, 0, null, false);
+        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, List.of(), null, 0, null, false, 0, 0);
     }
 
     /** Grid of item icons, e.g. an inventory. */
     public static InfoSection icons(Component title, List<ItemStack> icons, int columns) {
-        return new InfoSection(title, List.of(), icons, columns, List.of(), null, 0, null, false);
+        return new InfoSection(title, List.of(), icons, columns, List.of(), null, 0, null, false, 0, 0);
     }
 
     /** Title with a square image below. */
     public static InfoSection image(Component title, ResourceLocation image, int size) {
-        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, List.of(), image, size, null, false);
+        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, List.of(), image, size, null, false, 0, 0);
     }
 
     public static InfoSection lines(Component title, List<Component> lines) {
-        return new InfoSection(title, lines, List.of(), ROW_COLUMNS, List.of(), null, 0, null, false);
+        return new InfoSection(title, lines, List.of(), ROW_COLUMNS, List.of(), null, 0, null, false, 0, 0);
     }
 
     public static InfoSection rows(Component title, List<Row> rows) {
-        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, rows, null, 0, null, false);
+        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, rows, null, 0, null, false, 0, 0);
+    }
+
+    public static InfoSection progress(Component title, int current, int max) {
+        return new InfoSection(title, List.of(), List.of(), ROW_COLUMNS, List.of(), null, 0, null, false, Math.max(0, Math.min(current, max)), Math.max(1, max));
+    }
+
+    public InfoSection withProgress(int current, int max) {
+        return new InfoSection(this.title, this.lines, this.icons, this.columns, this.rows, this.image, this.imageSize, this.placeholder, this.decorations, Math.max(0, Math.min(current, max)), Math.max(1, max));
     }
 
     public InfoSection withLines(List<Component> lines) {
-        return new InfoSection(this.title, lines, this.icons, this.columns, this.rows, this.image, this.imageSize, this.placeholder, this.decorations);
+        return new InfoSection(this.title, lines, this.icons, this.columns, this.rows, this.image, this.imageSize, this.placeholder, this.decorations, this.progress, this.progressMax);
     }
 
     public InfoSection withRows(List<Row> rows) {
-        return new InfoSection(this.title, this.lines, this.icons, this.columns, rows, this.image, this.imageSize, this.placeholder, this.decorations);
+        return new InfoSection(this.title, this.lines, this.icons, this.columns, rows, this.image, this.imageSize, this.placeholder, this.decorations, this.progress, this.progressMax);
     }
 
     public InfoSection withPlaceholder(ResourceLocation placeholder) {
-        return new InfoSection(this.title, this.lines, this.icons, this.columns, this.rows, this.image, this.imageSize, placeholder, this.decorations);
+        return new InfoSection(this.title, this.lines, this.icons, this.columns, this.rows, this.image, this.imageSize, placeholder, this.decorations, this.progress, this.progressMax);
     }
 
     public InfoSection withDecorations() {
-        return new InfoSection(this.title, this.lines, this.icons, this.columns, this.rows, this.image, this.imageSize, this.placeholder, true);
+        return new InfoSection(this.title, this.lines, this.icons, this.columns, this.rows, this.image, this.imageSize, this.placeholder, true, this.progress, this.progressMax);
     }
 
     int iconRows() {
@@ -88,10 +103,22 @@ public record InfoSection(Component title, List<Component> lines, List<ItemStack
     int width(Font font) {
         int iconWidth = Math.min(this.icons.size(), this.columns) * ICON_STEP - (this.icons.isEmpty() ? 0 : ICON_STEP - ICON_SIZE - 2);
         int lineWidth = this.lines.stream().mapToInt(font::width).max().orElse(0);
-        return Math.max(Math.max(font.width(this.title), iconWidth), Math.max(Math.max(lineWidth, this.rowWidth(font)), this.imageSize));
+        int barWidth = this.progressMax > 0 ? BAR_MIN_WIDTH + 4 + font.width(this.progressText()) : 0;
+        return Math.max(Math.max(Math.max(font.width(this.title), iconWidth), Math.max(Math.max(lineWidth, this.rowWidth(font)), this.imageSize)), barWidth);
+    }
+
+    private Component progressText() {
+        return Component.literal(this.progress + "/" + this.progressMax);
+    }
+
+    private boolean hasTitle() {
+        return !this.title.getString().isEmpty();
     }
 
     int height() {
+        if (this.progressMax > 0) {
+            return (this.hasTitle() ? TITLE_HEIGHT : 0) + BAR_HEIGHT + this.lines.size() * LINE_HEIGHT;
+        }
         if (this.icons.isEmpty() && this.image == null && this.lines.isEmpty() && this.rows.isEmpty()) {
             return TEXT_HEIGHT;
         }
@@ -99,6 +126,10 @@ public record InfoSection(Component title, List<Component> lines, List<ItemStack
     }
 
     void draw(GuiGraphics graphics, Font font, int y, int width) {
+        if (this.progressMax > 0) {
+            this.drawProgress(graphics, font, y, width);
+            return;
+        }
         graphics.drawString(font, this.title, (width - font.width(this.title)) / 2, y, COLOR_TITLE);
         int cursor = y + TITLE_HEIGHT;
         int entryX = (width - this.rowWidth(font)) / 2;
@@ -140,5 +171,30 @@ public record InfoSection(Component title, List<Component> lines, List<ItemStack
         if (this.image != null) {
             graphics.blit(this.image, (width - this.imageSize) / 2, cursor, 0, 0, this.imageSize, this.imageSize, this.imageSize, this.imageSize);
         }
+    }
+
+    private void drawProgress(GuiGraphics graphics, Font font, int y, int width) {
+        int cursor = y;
+        if (this.hasTitle()) {
+            graphics.drawString(font, this.title, (width - font.width(this.title)) / 2, cursor, COLOR_TITLE);
+            cursor += TITLE_HEIGHT;
+        }
+        for (Component line : this.lines) {
+            graphics.drawString(font, line, (width - font.width(line)) / 2, cursor, COLOR_TEXT);
+            cursor += LINE_HEIGHT;
+        }
+        Component text = this.progressText();
+        int textWidth = font.width(text);
+        int left = 4;
+        int right = width - 4 - textWidth - 4;
+        int top = cursor + 1;
+        int bottom = top + BAR_HEIGHT - 2;
+        graphics.fill(left - 1, top - 1, right + 1, bottom + 1, COLOR_BAR_BORDER);
+        graphics.fill(left, top, right, bottom, COLOR_BAR_BACKGROUND);
+        int filled = left + Math.round((right - left) * (this.progress / (float) this.progressMax));
+        if (filled > left) {
+            graphics.fill(left, top, filled, bottom, this.progress >= this.progressMax ? COLOR_BAR_DONE : COLOR_BAR_RUNNING);
+        }
+        graphics.drawString(font, text, width - 4 - textWidth, cursor, COLOR_BAR_TEXT);
     }
 }

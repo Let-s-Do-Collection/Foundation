@@ -2,7 +2,11 @@ package net.satisfy.foundation.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -24,9 +28,17 @@ public class ClientUtil {
 
     public static <T extends BlockEntity> void renderBlock(BlockState state, PoseStack matrices, MultiBufferSource vertexConsumers, T entity) {
         Level level = entity.getLevel();
-        if (level != null) {
-            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, matrices, vertexConsumers, getLightLevel(level, entity.getBlockPos()), OverlayTexture.NO_OVERLAY);
+        if (level == null) {
+            return;
         }
+        int light = getLightLevel(level, entity.getBlockPos());
+        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
+        if (state.getRenderShape() == RenderShape.ENTITYBLOCK_ANIMATED) {
+            BakedModel model = dispatcher.getBlockModel(state);
+            dispatcher.getModelRenderer().renderModel(matrices.last(), vertexConsumers.getBuffer(ItemBlockRenderTypes.getRenderType(state, false)), state, model, 1.0F, 1.0F, 1.0F, light, OverlayTexture.NO_OVERLAY);
+            return;
+        }
+        dispatcher.renderSingleBlock(state, matrices, vertexConsumers, light, OverlayTexture.NO_OVERLAY);
     }
 
     public static <T extends BlockEntity> void renderBlockFromItem(BlockItem item, PoseStack matrices, MultiBufferSource vertexConsumers, T entity) {

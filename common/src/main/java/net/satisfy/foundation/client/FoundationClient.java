@@ -9,6 +9,7 @@ import net.satisfy.foundation.registry.FoundationBlockEntities;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import net.satisfy.foundation.banner.CompletionistBannerRenderer;
 import net.satisfy.foundation.overlay.BlockInfoOverlay;
+import net.satisfy.foundation.overlay.TutorialLoader;
 import net.satisfy.foundation.registry.FoundationEntities;
 import net.satisfy.foundation.seat.ChairRenderer;
 import net.satisfy.foundation.rarity.FoundationRarities;
@@ -31,6 +32,7 @@ public class FoundationClient {
     /** Overlay + tooltip hooks. */
     public static void onInitializeClient() {
         BlockInfoOverlay.init();
+        TutorialLoader.init();
         ArmorSetTooltips.init();
         FurnitureColors.init();
         InfoTooltip.init();

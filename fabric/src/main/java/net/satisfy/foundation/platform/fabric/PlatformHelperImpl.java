@@ -32,4 +32,8 @@ public class PlatformHelperImpl extends PlatformHelper {
     public static boolean showBlockNotices() {
         return config().infoTooltips.showBlockNotices;
     }
+
+    public static boolean showTutorials() {
+        return config().infoTooltips.showTutorials;
+    }
 }

@@ -2,6 +2,7 @@ package net.satisfy.foundation.client.fog;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -49,7 +50,7 @@ public final class BiomeFog {
     /** Adds or replaces a fog source. */
     public static void register(ResourceLocation id, Source source) {
         SOURCES.put(id, source);
-        if (!initialized) {
+        if (!initialized && !Platform.isModLoaded("distanthorizons")) {
             initialized = true;
             ClientTickEvent.CLIENT_POST.register(BiomeFog::tick);
         }

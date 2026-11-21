@@ -76,6 +76,8 @@ public final class BlockInfoOverlay {
     private static Component screenNoticeTitle;
     private static List<Component> screenNoticeLines = List.of();
     private static long screenNoticeSeen;
+    private static List<InfoSection> tutorialSections = List.of();
+    private static float tutorialAlpha;
 
     private BlockInfoOverlay() {
     }
@@ -135,7 +137,19 @@ public final class BlockInfoOverlay {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        drawScreenNotice(graphics, minecraft);
+        try {
+            drawAll(graphics, minecraft, level);
+        } finally {
+            graphics.flush();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.depthMask(true);
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableBlend();
+        }
+    }
+
+    private static void drawAll(GuiGraphics graphics, Minecraft minecraft, Level level) {
+        drawTutorial(graphics, minecraft, drawScreenNotice(graphics, minecraft));
         BlockPos notice = drawNotice(graphics, minecraft);
         BlockPos targeted = null;
         if (minecraft.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK) {
@@ -174,32 +188,49 @@ public final class BlockInfoOverlay {
         return noticePos;
     }
 
-    private static void drawScreenNotice(GuiGraphics graphics, Minecraft minecraft) {
+    private static int drawScreenNotice(GuiGraphics graphics, Minecraft minecraft) {
         if (screenNoticeTitle == null) {
-            return;
+            return SCREEN_NOTICE_TOP;
         }
         long elapsed = System.currentTimeMillis() - screenNoticeSeen;
         if (elapsed >= NOTICE_DURATION) {
             clearScreenNotice();
-            return;
+            return SCREEN_NOTICE_TOP;
         }
         List<InfoSection> sections = List.of(screenNoticeLines.isEmpty() ? InfoSection.title(screenNoticeTitle) : InfoSection.lines(screenNoticeTitle, screenNoticeLines));
+        float alpha = Mth.clamp((NOTICE_DURATION - elapsed) / (float) NOTICE_FADE, 0.0F, 1.0F);
+        return drawScreenPanel(graphics, minecraft, sections, alpha, SCREEN_NOTICE_TOP) + PANEL_GAP + 4;
+    }
+
+    private static void drawTutorial(GuiGraphics graphics, Minecraft minecraft, int top) {
+        if (tutorialSections.isEmpty() || tutorialAlpha <= 0.0F) {
+            return;
+        }
+        drawScreenPanel(graphics, minecraft, tutorialSections, tutorialAlpha, top);
+    }
+
+    static void setTutorialPanel(List<InfoSection> sections, float alpha) {
+        tutorialSections = List.copyOf(sections);
+        tutorialAlpha = alpha;
+    }
+
+    private static int drawScreenPanel(GuiGraphics graphics, Minecraft minecraft, List<InfoSection> sections, float alpha, int top) {
         Font font = minecraft.font;
         int width = panelWidth(font, sections);
         int height = panelHeight(sections);
-        float alpha = Mth.clamp((NOTICE_DURATION - elapsed) / (float) NOTICE_FADE, 0.0F, 1.0F);
         graphics.flush();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
         graphics.pose().pushPose();
-        graphics.pose().translate((graphics.guiWidth() - width) / 2.0F, SCREEN_NOTICE_TOP, 400.0F);
+        graphics.pose().translate((graphics.guiWidth() - width) / 2.0F, top, 400.0F);
         drawBackground(graphics, width, height, NOTICE_BACKGROUND, NOTICE_BORDER_TOP, NOTICE_BORDER_BOTTOM);
         graphics.flush();
         drawSections(graphics, font, sections, width);
         graphics.pose().popPose();
         graphics.flush();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        return top + height + 4;
     }
 
     private static int panelWidth(Font font, List<InfoSection> sections) {

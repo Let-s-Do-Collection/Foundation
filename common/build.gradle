@@ -20,3 +20,8 @@ publishing {
         }
     }
 }
+
+tasks.register("release") {
+    group = "publishing"
+    dependsOn ":fabric:modrinth", ":fabric:curseforge", ":neoforge:modrinth", ":neoforge:curseforge"
+}

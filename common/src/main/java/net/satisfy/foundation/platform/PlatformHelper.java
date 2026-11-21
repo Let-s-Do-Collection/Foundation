@@ -32,4 +32,9 @@ public class PlatformHelper {
     public static boolean showBlockNotices() {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static boolean showTutorials() {
+        throw new AssertionError();
+    }
 }

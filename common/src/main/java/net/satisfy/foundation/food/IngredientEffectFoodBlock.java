@@ -134,7 +134,7 @@ public abstract class IngredientEffectFoodBlock extends BaseEntityBlock {
             storedEffects = effectFoodBlockEntity.getEffects();
         }
 
-        player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
+        player.getFoodData().eat(foodComponent);
         world.playSound(null, pos, SoundEvents.FOX_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
         world.gameEvent(player, GameEvent.EAT, pos);
 

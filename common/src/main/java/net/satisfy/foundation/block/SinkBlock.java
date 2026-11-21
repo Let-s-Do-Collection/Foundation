@@ -2,6 +2,7 @@ package net.satisfy.foundation.block;
 
 import net.satisfy.foundation.util.ShapeUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.satisfy.foundation.registry.FoundationParticles;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -75,9 +76,32 @@ public class SinkBlock extends Block implements EntityBlock {
         }
     }
 
+    private final Layout layout;
+
     public SinkBlock(Properties settings) {
+        this(settings, Layout.DEFAULT);
+    }
+
+    public SinkBlock(Properties settings, Layout layout) {
         super(settings);
+        this.layout = layout;
         this.registerDefaultState(this.stateDefinition.any().setValue(HALF, DoubleBlockHalf.LOWER).setValue(FILLED, false).setValue(FACING, Direction.NORTH));
+    }
+
+    public record Layout(float basinX0, float basinX1, float basinZ0, float basinZ1, float surface, float levelStep, float spoutX, float spoutY, float spoutZ) {
+        public static final Layout DEFAULT = new Layout(3, 13, 3, 12, 12, 1, 8, 3.52F, 9);
+
+        public float surfaceHeight(float waterLevel) {
+            return (surface + waterLevel * levelStep) / 16.0F;
+        }
+    }
+
+    public Layout layout() {
+        return layout;
+    }
+
+    public static Layout layoutOf(BlockState state) {
+        return state.getBlock() instanceof SinkBlock sink ? sink.layout() : Layout.DEFAULT;
     }
 
     private static VoxelShape makeTopShape() {
@@ -102,14 +126,13 @@ public class SinkBlock extends Block implements EntityBlock {
         return shape;
     }
 
+    protected VoxelShape getSinkShape(DoubleBlockHalf half, Direction facing) {
+        return half == DoubleBlockHalf.UPPER ? TOP_SHAPES.get(facing) : BOTTOM_SHAPES.get(facing);
+    }
+
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        Direction facing = state.getValue(FACING);
-        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
-            return TOP_SHAPES.get(facing);
-        } else {
-            return BOTTOM_SHAPES.get(facing);
-        }
+        return getSinkShape(state.getValue(HALF), state.getValue(FACING));
     }
 
     @Override
@@ -146,6 +169,15 @@ public class SinkBlock extends Block implements EntityBlock {
         if (!world.isClientSide) {
             sink.setWaterLevel(water + change);
             world.playSound(null, pos, change > 0 ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.8F, 1.0F);
+            if (change > 0 && world instanceof ServerLevel server) {
+                BlockPos base = sink.getBlockPos();
+                double surface = base.getY() + layout.surfaceHeight(water + change);
+                for (int i = 0; i < 12; i++) {
+                    double x = base.getX() + 0.3 + world.random.nextDouble() * 0.4;
+                    double z = base.getZ() + 0.3 + world.random.nextDouble() * 0.4;
+                    server.sendParticles(ParticleTypes.SPLASH, x, surface, z, 1, 0, 0, 0, 0.01);
+                }
+            }
             if (!player.getAbilities().instabuild) {
                 itemStack.shrink(1);
                 if (!player.getInventory().add(result)) {
@@ -209,8 +241,15 @@ public class SinkBlock extends Block implements EntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        if (world.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER) {
+        if (state.getValue(HALF) != DoubleBlockHalf.LOWER) {
             return null;
+        }
+        if (world.isClientSide) {
+            return (level, pos, blockState, blockEntity) -> {
+                if (blockEntity instanceof SinkBlockEntity sink) {
+                    SinkBlockEntity.clientTick(sink);
+                }
+            };
         }
         return (level, pos, blockState, blockEntity) -> {
             if (blockEntity instanceof SinkBlockEntity sink) {
@@ -329,7 +368,7 @@ public class SinkBlock extends Block implements EntityBlock {
             world.addParticle(ParticleTypes.FALLING_WATER, spout.x, spout.y, spout.z, 0.0, 0.0, 0.0);
             world.addParticle(FoundationParticles.WATER_DRIP.get(), spout.x, spout.y, spout.z, 0.0, 0.0, 0.0);
             if (randomSource.nextInt(3) == 0) {
-                double surface = pos.getY() - 1 + (12.0 + Math.max(1, sink.getWaterLevel())) / 16.0;
+                double surface = pos.getY() - 1 + layout.surfaceHeight(Math.max(1, sink.getWaterLevel()));
                 world.addParticle(FoundationParticles.WATER_SPLASH.get(), spout.x, surface, spout.z, 0.0, 0.0, 0.0);
             }
             if (randomSource.nextInt(20) == 0) {
@@ -340,13 +379,13 @@ public class SinkBlock extends Block implements EntityBlock {
         }
     }
 
-    public static Vec3 spout(BlockPos upper, Direction facing) {
-        double x = 8.0 / 16.0, z = 9.0 / 16.0;
+    public Vec3 spout(BlockPos upper, Direction facing) {
+        double x = layout.spoutX() / 16.0, z = layout.spoutZ() / 16.0;
         for (int turn = 0; turn < (int) (facing.toYRot() / 90.0F + 2) % 4; turn++) {
             double rotated = 1.0 - z;
             z = x;
             x = rotated;
         }
-        return new Vec3(upper.getX() + x, upper.getY() + 0.22, upper.getZ() + z);
+        return new Vec3(upper.getX() + x, upper.getY() + layout.spoutY() / 16.0, upper.getZ() + z);
     }
 }
